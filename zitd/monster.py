@@ -40,7 +40,14 @@ class Monster():
             self.node.setTexture(self.ts_normal, self.tex_normal)
             self.node.reparentTo(render) 
             self.node.loop('stand')
+        elif type == 'nos':
+            self.node = loader.loadModel('models/nos')
+            self.node.setPos(pos[0]*TILE_SIZE,pos[1]*TILE_SIZE,5)
+            self.node.setScale(2)
+            self.node.setColor(1,0,0)
+            self.node.reparentTo(render)
 
+        """
         segs = LineSegs()
         segs.setThickness(23)
         segs.setColor(VBase4(1,0,0,1))
@@ -50,7 +57,7 @@ class Monster():
         self.linenode.setPos(0,0,35)
         self.linenode.setScale(5)
         self.linenode.setLightOff()
-
+        """
         self.action = 'stand'
         self.patrol_points = [(1,1), (4,11), (12,20), (18,4), (19,17)]
         taskMgr.doMethodLater(1, self.behaviourTask, 'behtask')
@@ -59,7 +66,7 @@ class Monster():
         move = Sequence()
         start = self.node.getPos()
         for p in self.path:
-            dest = Point3(p[0]*TILE_SIZE, p[1]*TILE_SIZE, 0)
+            dest = Point3(p[0]*TILE_SIZE, p[1]*TILE_SIZE, 5)
             i = Sequence(self.node.posInterval(self.speed, dest, start), Func(self.updatePosition, p))
             start = dest
             move.append(i)

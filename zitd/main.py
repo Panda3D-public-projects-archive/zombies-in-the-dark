@@ -39,7 +39,7 @@ class App(DirectObject):
         render.setLight(self.slnp)
         
         # Instance one monster
-        self.baby = Monster(self, 'baby', (19,17))
+        self.baby = Monster(self, 'nos', (19,17))
         
         # Create ambient light
         self.alight = AmbientLight("alight")
