@@ -29,7 +29,10 @@ class Player(DirectObject):
         self.keys['back'] = 0
         self.keys['strafe_left'] = 0
         self.keys['strafe_right'] = 0
-        
+    
+        self.setKeyEvents()
+    
+    def setKeyEvents(self):
         self.accept('w', self.setKeys, ['forward', 1])
         self.accept('w-up', self.setKeys, ['forward', 0])
         self.accept('s', self.setKeys, ['back', 1])
@@ -39,7 +42,9 @@ class Player(DirectObject):
         self.accept('d', self.setKeys, ['strafe_right', 1])
         self.accept('d-up', self.setKeys, ['strafe_right', 0])
         self.accept('x', self.toggleMovement)
-        self.accept('escape', taskMgr.stop)
+        
+    def clearKeyEvents(self):
+        self.ignoreAll()
     
     def toggleMovement(self):
         if self.can_move == True:
