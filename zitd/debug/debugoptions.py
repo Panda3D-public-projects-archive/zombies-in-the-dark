@@ -26,6 +26,8 @@ class DebugOptions(DirectObject):
         taskMgr.add(self.refreshPlayerPos, 'RefreshPlayerPosTask')
         self.textPlayerPos.reparentTo(base.a2dTopLeft)
         
+        self.walls = True
+        
         #spotlightpanel
         #self.spot_light_panel = SpotlightPanel(self, self.parent.slight)
         
@@ -34,6 +36,7 @@ class DebugOptions(DirectObject):
         base.accept('f3', self.toggleFlashlightFrustum)
         base.accept('f5', self.toggleAutoShader)
         base.accept('f6', self.togglePlayerPos)
+        base.accept('f10', self.toggleWalls)
         base.accept('f12', self.debugPrint)
     
     def toggleFps(self):
@@ -68,6 +71,14 @@ class DebugOptions(DirectObject):
             self.autoShader = False
             render.setShaderOff()
             
+    def toggleWalls(self):
+        if self.walls == False:
+            self.walls = True
+            self.parent.level.wall_node.reparentTo(self.parent.level.node)
+        else:
+            self.walls = False
+            self.parent.level.wall_node.detachNode()
+    
     def togglePlayerPos(self): 
         if self.playerPos == False:
             self.playerPos = True
