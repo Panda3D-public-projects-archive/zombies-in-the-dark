@@ -78,8 +78,8 @@ class Level():
                         self.nav_graph[x, pos_y-1].remove((x, pos_y))
                         self.nav_graph[x, pos_y+1].remove((x, pos_y)) 
         """
-        self.node.clearModelNodes()
-        self.node.flattenStrong()
+        #self.node.clearModelNodes()
+        #self.node.flattenStrong()
                         
     def loadTile(self, x, y, type):
         cm = CardMaker('cm')
