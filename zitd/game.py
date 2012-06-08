@@ -13,7 +13,7 @@ class Game(DirectObject):
         base.win.setClearColor(VBase4(0, 0, 0, 0))
         self.parent = parent
         # GAMETYPE
-        self.type = 'DEBUG' # 'FPS' or 'DEBUG'
+        self.type = 'FPS' # 'FPS' or 'DEBUG'
         
         # Creating level geometry
         self.level = Level(self)
@@ -59,6 +59,8 @@ class Game(DirectObject):
     
     def pause(self):
         self.player.clearKeyEvents()
+        self.player.disconnectMouse()
         
     def resume(self):
         self.player.setKeyEvents()
+        self.player.reconnectMouse()
