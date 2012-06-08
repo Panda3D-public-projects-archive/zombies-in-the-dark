@@ -2,6 +2,7 @@ from direct.task.Task import Task
 from direct.showbase.PythonUtil import clampScalar
 from direct.gui.OnscreenText import OnscreenText
 from direct.showbase.DirectObject import DirectObject
+from panda3d.core import WindowProperties
 from panda3d.core import *
 from utils import *
 
@@ -16,6 +17,11 @@ class Player(DirectObject):
         self.speed = TILE_SIZE
         self.can_move = True
         self.camera = True
+        self.mouse_owner = True
+        
+        props = WindowProperties()
+        props.setCursorHidden(True) 
+        base.win.requestProperties(props)
         
         self.cn = self.node.attachNewNode(CollisionNode('PlayerCollisionNode'))
         self.cn.node().addSolid(CollisionSphere(0, 0, 0, 1.8))
@@ -46,6 +52,22 @@ class Player(DirectObject):
     def clearKeyEvents(self):
         self.ignoreAll()
     
+    def disconnectMouse(self):
+        self.mouse_owner = False
+        props = WindowProperties()
+        props.setCursorHidden(False) 
+        base.win.requestProperties(props)
+        
+    def reconnectMouse(self):
+        self.mouse_owner = True
+        md = base.win.getPointer(0)
+        x = md.getX()
+        y = md.getY()
+        props = WindowProperties()
+        props.setCursorHidden(True) 
+        base.win.requestProperties(props)
+        base.win.movePointer(0, self.centerx, self.centery)
+    
     def toggleMovement(self):
         if self.can_move == True:
             self.can_move = False
@@ -64,7 +86,7 @@ class Player(DirectObject):
             x = md.getX()
             y = md.getY()
     
-            if base.win.movePointer(0, self.centerx, self.centery):
+            if self.mouse_owner and base.win.movePointer(0, self.centerx, self.centery):
                 h, p, r = self.node.getHpr()
                 h += (x - self.centerx) * -0.2
                 p += (y - self.centery) * -0.2
