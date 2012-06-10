@@ -1,7 +1,7 @@
 body
 {
-	width: 800px;
-	height: 600px;
+	width: auto;
+	height: auto;
 	
 	font-family: Verdana;
 	font-size: 14px;
@@ -36,6 +36,80 @@ div.text_container
 	width: 700px;
 	height: 20px;
 	float:left;
+}
+
+div#top_container
+{
+	width: auto;
+	height: 50px;
+}
+
+div#top_center_container
+{
+	width: 450;
+	height: 40px;
+	margin-top: 10px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+div#top_left_container
+{
+	width: 150;
+	height: 40px;
+	float:left;
+}
+
+div#top_right_container
+{
+	width: 150;
+	height: 40px;
+	float:left;
+}
+
+div#top_middle_container
+{
+	width: 150;
+	height: 40px;
+	float:left;
+}
+
+div.bullet
+{
+	width: 15px;
+	height: 30px;
+	margin-top: 5px;
+	float: left;
+}
+
+div.bullet_image
+{
+	width: 10px;
+	height: 29px;
+	margin-left: 5px;
+}
+
+div#health_bar
+{
+	width: 150px;
+	height: 25px;
+	margin-top: 7px;
+}
+
+div#health_left
+{
+	width: 100px;
+	height: 25px;
+	float:left;
+	background: green;
+}
+
+div#health_filler
+{
+	width:50px;
+	height:25px;
+	float:left;
+	background: red;
 }
 
 div#list_container
@@ -180,6 +254,7 @@ div#middle_button_container
 	margin-left: auto;
 	margin-right: auto;
 	float:left;
+	background: yellow;
 {
 
 div#logo
