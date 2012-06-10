@@ -9,7 +9,6 @@
 				<div id="top_left_container">
 					<div id="health_bar">
 						<div id="health_left"></div>
-						<div id="health_filler"></div>
 					</div>
 				</div>
 				<div id="top_middle_container">
