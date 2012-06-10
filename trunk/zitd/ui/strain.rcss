@@ -255,7 +255,6 @@ div#middle_button_container
 	margin-left: auto;
 	margin-right: auto;
 	float:left;
-	background: yellow;
 {
 
 div#logo
@@ -268,12 +267,13 @@ div#logo
 
 div#logo_image
 {
-	width: 328px;
-	height: 101px;
+	width: 579px;
+	height: 167px;
 	logo-decorator: image;
-    logo-image: strain_logo.png;
+    logo-image: zitd_logo.png;
     margin-left: auto;
 	margin-right: auto;
+	margin-top: 100px;
 	float: left;
 }
 
