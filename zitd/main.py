@@ -57,10 +57,18 @@ class AppFSM(FSM.FSM):
         self.parent.game = Game(self.parent)
         # Instancing game UI
         self.parent.gameui = GameUI(self.parent)
+        self.accept('u', self.parent.gameui.minusHealth)
+        self.accept('i', self.parent.gameui.plusHealth)
+        self.accept('o', self.parent.gameui.minusBullets)
+        self.accept('p', self.parent.gameui.plusBullets)
         
     def exitNewGame(self):
         self.parent.gameui.cleanup()
-        
+        self.ignore('u')
+        self.ignore('i')
+        self.ignore('o')
+        self.ignore('p')
+
     def enterPause(self):
         self.parent.game.pause()
         # Instancing pause game UI
@@ -75,9 +83,17 @@ class AppFSM(FSM.FSM):
         self.parent.game.resume()
         # Instancing game UI
         self.parent.gameui = GameUI(self.parent)
+        self.accept('u', self.parent.gameui.minusHealth)
+        self.accept('i', self.parent.gameui.plusHealth)
+        self.accept('o', self.parent.gameui.minusBullets)
+        self.accept('p', self.parent.gameui.plusBullets)
         
     def exitResumeGame(self):
         self.parent.gameui.cleanup()
+        self.ignore('u')
+        self.ignore('i')
+        self.ignore('o')
+        self.ignore('p')
 
 a = App()
 run()
