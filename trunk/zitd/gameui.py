@@ -75,8 +75,6 @@ class GameUI():
         self.doc = self.parent.rContext.LoadDocument('ui/gameui.rml')
         self.doc.Show()
         
-        element = self.doc.GetElementById('status_bar')
-        element.inner_rml = 'Game UI'
     
     def cleanup(self):
         self.parent.rRegion.setActive(0)
