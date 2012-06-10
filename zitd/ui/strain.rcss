@@ -267,8 +267,8 @@ div#logo
 
 div#logo_image
 {
-	width: 579px;
-	height: 167px;
+	width: 500px;
+	height: 144px;
 	logo-decorator: image;
     logo-image: zitd_logo.png;
     margin-left: auto;
