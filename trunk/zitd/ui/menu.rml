@@ -14,7 +14,7 @@
 		</style>
 	</head>
 	<body >
-		<div id="status_bar" class="text_container">
+		<div id="logo_image">
 		</div>
 		<div id="container">
 			<div id="middle_button_container" style="text-align:center;">
