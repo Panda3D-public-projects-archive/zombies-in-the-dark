@@ -18,6 +18,10 @@ class Player(DirectObject):
         self.can_move = True
         self.camera = True
         self.mouse_owner = True
+        self.max_health = 100
+        self.health = 100
+        self.max_bullets = 10
+        self.bullets = 4
         
         props = WindowProperties()
         props.setCursorHidden(True) 
