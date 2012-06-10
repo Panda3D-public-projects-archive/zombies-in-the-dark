@@ -94,6 +94,7 @@ div#health_bar
 	width: 150px;
 	height: 25px;
 	margin-top: 7px;
+	background: red;
 }
 
 div#health_left
