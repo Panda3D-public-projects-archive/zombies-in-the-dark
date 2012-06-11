@@ -23,6 +23,12 @@ class Game(DirectObject):
             base.disableMouse()
             base.camera.reparentTo(self.player.node)
             base.camLens.setFov(100)
+            # Load aim icon
+            cm = CardMaker('aim_node')
+            cm.setFrame(-0.02, 0.02, -0.02, 0.02)
+            aim_node = aspect2d.attachNewNode(cm.generate())
+            aim_node.setTexture(loader.loadTexture('models/aim.png'))
+            aim_node.setTransparency(TransparencyAttrib.MAlpha)
         elif self.type == 'DEBUG':
             base.disableMouse()
             self.camera = CameraManager(self)
