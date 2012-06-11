@@ -37,6 +37,7 @@ class DebugOptions(DirectObject):
         base.accept('f5', self.toggleAutoShader)
         base.accept('f6', self.togglePlayerPos)
         base.accept('f10', self.toggleWalls)
+        base.accept('f11', render.analyze)
         base.accept('f12', self.debugPrint)
     
     def toggleFps(self):

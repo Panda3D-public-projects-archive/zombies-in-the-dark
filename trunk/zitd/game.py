@@ -64,6 +64,11 @@ class Game(DirectObject):
         
         # Instance class for debug output
         self.debug = DebugOptions(self)
+        
+        # Debug
+        #PStatClient.connect()
+        #meter = SceneGraphAnalyzerMeter('meter', render.node())
+        #meter.setupWindow(base.win) 
     
     def pause(self):
         self.player.clearKeyEvents()

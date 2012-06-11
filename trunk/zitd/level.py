@@ -11,6 +11,20 @@ class Level():
         self.nav_graph = {}
         self.x_size = pnmi.getXSize()
         self.y_size = pnmi.getYSize()
+        
+        # Create dict for parenting geometry
+        self.floor_node_dict = {}
+        self.wall_node_dict = {}
+        chunk_size = 5
+        
+        chunk_num_x = int((self.x_size-1) / chunk_size) + 1
+        chunk_num_y = int((self.y_size-1) / chunk_size) + 1
+        
+        for i in xrange(chunk_num_x):
+            for j in xrange(chunk_num_y):
+                self.floor_node_dict[(i,j)] = self.node.attachNewNode('Node_'+str(i)+'_'+str(j))
+                self.wall_node_dict[(i,j)] = self.wall_node.attachNewNode('WallNode_'+str(i)+'_'+str(j))
+        
         self.start_pos = (0,0)
         for x in xrange(self.x_size):
             for y in xrange(self.y_size):
@@ -25,38 +39,38 @@ class Level():
                     self.nav_graph[(x,pos_y)] = []
                     
                     
-                    self.loadFloor(x, pos_y, 'TILE_FLOOR').reparentTo(self.node)
-                    self.loadFloor(x, pos_y, 'TILE_CEIL').reparentTo(self.node)
+                    self.loadFloor(x, pos_y, 'TILE_FLOOR').reparentTo(self.floor_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                    self.loadFloor(x, pos_y, 'TILE_CEIL').reparentTo(self.floor_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                     
                     # neighbours
                     if x == 0:
-                        self.loadTile(x, pos_y, 'TILE_EAST').reparentTo(self.wall_node)
+                        self.loadWall(x, pos_y, 'TILE_EAST').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                     if x == self.x_size-1:
-                        self.loadTile(x, pos_y, 'TILE_WEST').reparentTo(self.wall_node)
+                        self.loadWall(x, pos_y, 'TILE_WEST').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                     if x > 0:
                         if pnmi.getRedVal(x-1,y) == 255 and pnmi.getBlueVal(x-1,y) == 0 and pnmi.getGreenVal(x-1,y) == 0:
-                            self.loadTile(x, pos_y, 'TILE_EAST').reparentTo(self.wall_node)
+                            self.loadWall(x, pos_y, 'TILE_EAST').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                         else:
                             self.nav_graph[x, pos_y].append((x-1, pos_y))
                     if x < self.x_size-1:
                         if pnmi.getRedVal(x+1,y) == 255 and pnmi.getBlueVal(x+1,y) == 0 and pnmi.getGreenVal(x+1,y) == 0:
-                            self.loadTile(x, pos_y, 'TILE_WEST').reparentTo(self.wall_node)
+                            self.loadWall(x, pos_y, 'TILE_WEST').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                         else:
                             self.nav_graph[x, pos_y].append((x+1, pos_y))
                     
                     
                     if y == 0:
-                        self.loadTile(x, pos_y, 'TILE_SOUTH').reparentTo(self.wall_node)
+                        self.loadWall(x, pos_y, 'TILE_SOUTH').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                     if y == self.y_size-1:
-                        self.loadTile(x, pos_y, 'TILE_NORTH').reparentTo(self.wall_node)
+                        self.loadWall(x, pos_y, 'TILE_NORTH').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                     if y > 0:
                         if pnmi.getRedVal(x,y-1) == 255 and pnmi.getBlueVal(x,y-1) == 0 and pnmi.getGreenVal(x,y-1) == 0:
-                            self.loadTile(x, pos_y, 'TILE_SOUTH').reparentTo(self.wall_node)
+                            self.loadWall(x, pos_y, 'TILE_SOUTH').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                         else:
                             self.nav_graph[x, pos_y].append((x, pos_y+1))
                     if y < self.y_size-1:
                         if pnmi.getRedVal(x,y+1) == 255 and pnmi.getBlueVal(x,y+1) == 0 and pnmi.getGreenVal(x,y+1) == 0:
-                            self.loadTile(x, pos_y, 'TILE_NORTH').reparentTo(self.wall_node)
+                            self.loadWall(x, pos_y, 'TILE_NORTH').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                         else:
                             self.nav_graph[x, pos_y].append((x, pos_y-1))
         
@@ -78,8 +92,12 @@ class Level():
                         self.nav_graph[x, pos_y-1].remove((x, pos_y))
                         self.nav_graph[x, pos_y+1].remove((x, pos_y)) 
         """
-        #self.node.clearModelNodes()
-        #self.node.flattenStrong()
+        for i in xrange(chunk_num_x):
+            for j in xrange(chunk_num_y):
+                self.floor_node_dict[(i,j)].clearModelNodes()
+                self.floor_node_dict[(i,j)].flattenStrong()
+                self.wall_node_dict[(i,j)].clearModelNodes()
+                self.wall_node_dict[(i,j)].flattenStrong()                
                         
     def loadTile(self, x, y, type):
         cm = CardMaker('cm')
@@ -107,6 +125,26 @@ class Level():
         elif type == 'TILE_SOUTH':
             cm_node.setPos(x*TILE_SIZE, y*TILE_SIZE+TILE_SIZE/2, TILE_SIZE*ASPECT/2)
         return cm_node
+    
+    def loadWall(self, x, y, type):
+        model = loader.loadModel('models/wall')
+        model.setTexture(loader.loadTexture('models/tex.png'))
+        if type == 'TILE_WEST':
+            model.setPos(x*TILE_SIZE+TILE_SIZE/2, y*TILE_SIZE, TILE_SIZE*ASPECT/2)
+            model.setP(90)
+            model.setH(-90)
+        elif type == 'TILE_EAST':
+            model.setPos(x*TILE_SIZE-TILE_SIZE/2, y*TILE_SIZE, TILE_SIZE*ASPECT/2)
+            model.setP(90)
+            model.setH(90)          
+        elif type == 'TILE_NORTH':
+            model.setPos(x*TILE_SIZE, y*TILE_SIZE-TILE_SIZE/2, TILE_SIZE*ASPECT/2)
+            model.setP(90)
+            model.setH(180)             
+        elif type == 'TILE_SOUTH':
+            model.setPos(x*TILE_SIZE, y*TILE_SIZE+TILE_SIZE/2, TILE_SIZE*ASPECT/2)
+            model.setP(90)            
+        return model        
     
     def loadFloor(self, x, y, type):
         model = loader.loadModel('models/floor')
