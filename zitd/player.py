@@ -2,6 +2,7 @@ from direct.task.Task import Task
 from direct.showbase.PythonUtil import clampScalar
 from direct.gui.OnscreenText import OnscreenText
 from direct.showbase.DirectObject import DirectObject
+from direct.showbase.ShowBase import ShowBase#@UnresolvedImport
 from panda3d.core import WindowProperties
 from panda3d.core import *
 from utils import *
@@ -49,6 +50,9 @@ class Player(DirectObject):
         self.slight.setAttenuation(Point3(0.737, 0.134, 0.001))
         render.setLight(self.slnp)
         self.flashlight = True
+        
+        self.shoot_sound = base.loader.loadSfx("audio/GUN_FIRE-GoodSoundForYou-820112263.wav")
+        self.gun_click_sound = base.loader.loadSfx("audio/Dry Fire Gun-SoundBible.com-2053652037.wav")
         
         self.keys = {}
         self.keys['forward'] = 0
@@ -109,8 +113,9 @@ class Player(DirectObject):
         if self.bullets > 0:
             self.parent.parent.gameui.minusBullets()
             self.bullet_objects.append(Bullet(self.node.getPos(), self.node.getHpr(), speed = 50, life=15))
+            self.shoot_sound.play()
         else:
-            #TODO: mozda dodati zvuk praznog pistolja?
+            self.gun_click_sound.play()
             None
     
     def setKeys(self, key, value):
