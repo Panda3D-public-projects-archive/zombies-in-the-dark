@@ -20,9 +20,11 @@ class Game(DirectObject):
         # Instance the player controller
         self.player = Player(self, self.level.start_pos)
         if self.type == 'FPS':
+            base.disableMouse()
             base.camera.reparentTo(self.player.node)
             base.camLens.setFov(100)
         elif self.type == 'DEBUG':
+            base.disableMouse()
             self.camera = CameraManager(self)
         # Create player flashlight
         self.slight = Spotlight('slight')
