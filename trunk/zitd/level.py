@@ -1,11 +1,14 @@
 from panda3d.core import *
 from utils import *
+import random
 
 class Level():
     def __init__(self, parent):
         self.parent = parent
         self.node = render.attachNewNode('LevelNode')
         self.wall_node = self.node.attachNewNode('LevelWallNode')
+        self.rf_light_node = self.node.attachNewNode('RedFlickeringLightNode')
+        self.lights = []
         pnmi = PNMImage()
         pnmi.read(Filename('levels/eob1.png'))
         self.nav_graph = {}
@@ -33,9 +36,15 @@ class Level():
                 if pnmi.getRedVal(x,y) == 0 and pnmi.getBlueVal(x,y) == 255 and pnmi.getGreenVal(x,y) == 0:
                     self.start_pos = (x, pos_y)
                 
-                if ((pnmi.getRedVal(x,y) == 255 and pnmi.getBlueVal(x,y) == 255 and pnmi.getGreenVal(x,y) == 255) or
+                if pnmi.getRedVal(x,y) == 128 and pnmi.getBlueVal(x,y) == 128 and pnmi.getGreenVal(x,y) == 128:
+                    self.loadLight(x, pos_y, 'RED_FLICKERING')
+                
+                if (
+                    (pnmi.getRedVal(x,y) == 255 and pnmi.getBlueVal(x,y) == 255 and pnmi.getGreenVal(x,y) == 255) or
                     (pnmi.getRedVal(x,y) == 0 and pnmi.getBlueVal(x,y) == 255 and pnmi.getGreenVal(x,y) == 0) or
-                    (pnmi.getRedVal(x,y) == 0 and pnmi.getBlueVal(x,y) == 0 and pnmi.getGreenVal(x,y) == 255)):
+                    (pnmi.getRedVal(x,y) == 0 and pnmi.getBlueVal(x,y) == 0 and pnmi.getGreenVal(x,y) == 255) or
+                    (pnmi.getRedVal(x,y) == 128 and pnmi.getBlueVal(x,y) == 128 and pnmi.getGreenVal(x,y) == 128)
+                    ):
                     self.nav_graph[(x,pos_y)] = []
                     
                     
@@ -97,34 +106,12 @@ class Level():
                 self.floor_node_dict[(i,j)].clearModelNodes()
                 self.floor_node_dict[(i,j)].flattenStrong()
                 self.wall_node_dict[(i,j)].clearModelNodes()
-                self.wall_node_dict[(i,j)].flattenStrong()                
-                        
-    def loadTile(self, x, y, type):
-        cm = CardMaker('cm')
-        if type == 'TILE_CEIL' or type == 'TILE_FLOOR':
-            cm.setFrame(-TILE_SIZE/2, TILE_SIZE/2, -TILE_SIZE/2, TILE_SIZE/2)
-        else:
-            cm.setFrame(-TILE_SIZE/2, TILE_SIZE/2, -TILE_SIZE*ASPECT/2, TILE_SIZE*ASPECT/2)
-        cm_node = NodePath(cm.generate())
-        cm_node.setTexture(loader.loadTexture('models/tex.png')) 
-        if type == 'TILE_CEIL':
-            cm_node.setPos(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*ASPECT)
-            cm_node.setP(90)
-        elif type == 'TILE_FLOOR':
-            cm_node.setPos(x*TILE_SIZE, y*TILE_SIZE, 0)
-            cm_node.setP(-90)
-        elif type == 'TILE_WEST':
-            cm_node.setPos(x*TILE_SIZE+TILE_SIZE/2, y*TILE_SIZE, TILE_SIZE*ASPECT/2)
-            cm_node.setH(-90)
-        elif type == 'TILE_EAST':
-            cm_node.setPos(x*TILE_SIZE-TILE_SIZE/2, y*TILE_SIZE, TILE_SIZE*ASPECT/2)
-            cm_node.setH(90)
-        elif type == 'TILE_NORTH':
-            cm_node.setPos(x*TILE_SIZE, y*TILE_SIZE-TILE_SIZE/2, TILE_SIZE*ASPECT/2)
-            cm_node.setH(180)
-        elif type == 'TILE_SOUTH':
-            cm_node.setPos(x*TILE_SIZE, y*TILE_SIZE+TILE_SIZE/2, TILE_SIZE*ASPECT/2)
-        return cm_node
+                self.wall_node_dict[(i,j)].flattenStrong()
+                
+        self.light_task_timer = 0
+        self.light_task_state = True
+        self.light_task_time = random.randint(1, 2)
+        taskMgr.add(self.lightTask, 'LightTask')
     
     def loadWall(self, x, y, type):
         model = loader.loadModel('models/wall')
@@ -167,3 +154,31 @@ class Level():
             node.setPos(x*TILE_SIZE, y*TILE_SIZE - TILE_SIZE/2, 0)
             node.setH(90)
         return node
+    
+    def loadLight(self, x, y, type):
+        if type == 'RED_FLICKERING':
+            plight = PointLight('plight')
+            plight.setColor(VBase4(0.7, 0.2, 0.2, 1))
+            plight.setAttenuation(Point3(0, 0, 0.04))            
+            plnp = self.rf_light_node.attachNewNode(plight)
+            plnp.setPos(x*TILE_SIZE - TILE_SIZE/2, y*TILE_SIZE, 5)
+            render.setLight(plnp)
+            self.lights.append(plnp)
+            
+    def lightTask(self, task):
+        self.light_task_timer = self.light_task_timer + globalClock.getDt()
+        if self.light_task_timer > self.light_task_time:
+            if self.light_task_state:
+                for l in self.lights:
+                    render.clearLight(l)
+                self.light_task_state = False
+                self.light_task_timer = 0
+                self.light_task_time = random.uniform(0.5, 1.5)                
+            else:
+                for l in self.lights:
+                    render.setLight(l)
+                self.light_task_state = True
+                self.light_task_timer = 0
+                self.light_task_time = random.randint(1, 4)
+        return task.cont
+        
