@@ -25,8 +25,8 @@ class Level():
                     self.nav_graph[(x,pos_y)] = []
                     
                     
-                    self.loadTile(x, pos_y, 'TILE_FLOOR').reparentTo(self.node)
-                    self.loadTile(x, pos_y, 'TILE_CEIL').reparentTo(self.node)
+                    self.loadFloor(x, pos_y, 'TILE_FLOOR').reparentTo(self.node)
+                    self.loadFloor(x, pos_y, 'TILE_CEIL').reparentTo(self.node)
                     
                     # neighbours
                     if x == 0:
@@ -107,6 +107,17 @@ class Level():
         elif type == 'TILE_SOUTH':
             cm_node.setPos(x*TILE_SIZE, y*TILE_SIZE+TILE_SIZE/2, TILE_SIZE*ASPECT/2)
         return cm_node
+    
+    def loadFloor(self, x, y, type):
+        model = loader.loadModel('models/floor')
+        model.setTexture(loader.loadTexture('models/tex.png'))
+        if type == 'TILE_CEIL':
+            model.setPos(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*ASPECT)
+            model.setP(180)
+        elif type == 'TILE_FLOOR':
+            model.setPos(x*TILE_SIZE, y*TILE_SIZE, 0)
+            #model.setP(-90)
+        return model
     
     def loadDoor(self, x, y, type):
         node = loader.loadModel('models/door')

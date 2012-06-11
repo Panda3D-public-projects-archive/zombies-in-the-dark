@@ -1,0 +1,63 @@
+<CoordinateSystem> { Z-Up }
+
+<Material> FloorMat {
+  <Scalar> diffr { 0.8 }
+  <Scalar> diffg { 0.8 }
+  <Scalar> diffb { 0.8 }
+  <Scalar> emitr { 0 }
+  <Scalar> emitg { 0 }
+  <Scalar> emitb { 0 }
+  <Scalar> specr { 0.781 }
+  <Scalar> specg { 0.781 }
+  <Scalar> specb { 0.781 }
+  <Scalar> shininess { 6.25 }
+}
+<Group> Floor {
+  <Transform> {
+    <Matrix4> {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      0 0 0 1
+    }
+  }
+  <VertexPool> Floor {
+    <Vertex> 0 {
+      -5 -5 0
+      <UV> {
+        1 1
+        <Tangent> { -1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+    }
+    <Vertex> 1 {
+      -5 5 0
+      <UV> {
+        1 0
+        <Tangent> { -1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+    }
+    <Vertex> 2 {
+      5 -5 0
+      <UV> {
+        0 1
+        <Tangent> { -1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+    }
+    <Vertex> 3 {
+      5 5 0
+      <UV> {
+        0 0
+        <Tangent> { -1 0 0 }
+        <Binormal> { 0 -1 0 }
+      }
+    }
+  }
+  <Polygon> {
+    <Normal> { 0 0 1 }
+    <MRef> { FloorMat }
+    <VertexRef> { 3 1 0 2 <Ref> { Floor } }
+  }
+}
