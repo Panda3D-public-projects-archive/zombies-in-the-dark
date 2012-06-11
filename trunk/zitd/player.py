@@ -5,6 +5,7 @@ from direct.showbase.DirectObject import DirectObject
 from panda3d.core import WindowProperties
 from panda3d.core import *
 from utils import *
+from bullet import Bullet
 
 class Player(DirectObject):
     def __init__(self, parent, pos):
@@ -12,6 +13,7 @@ class Player(DirectObject):
         self.node = render.attachNewNode('PlayerNode')
         self.node.setPos(pos[0]*TILE_SIZE,pos[1]*TILE_SIZE,TILE_SIZE*ASPECT/1.5)
         taskMgr.add(self.updatePlayer, 'UpdatePlayerTask')
+        taskMgr.add(self.updateBullets, 'UpdateBulletsTask')
         self.centerx = base.win.getProperties().getXSize()/2
         self.centery = base.win.getProperties().getYSize()/2
         self.speed = TILE_SIZE
@@ -22,6 +24,7 @@ class Player(DirectObject):
         self.health = 100
         self.max_bullets = 10
         self.bullets = 4
+        self.bullet_objects = []
         
         props = WindowProperties()
         props.setCursorHidden(True) 
@@ -64,6 +67,7 @@ class Player(DirectObject):
         self.accept('a-up', self.setKeys, ['strafe_left', 0])
         self.accept('d', self.setKeys, ['strafe_right', 1])
         self.accept('d-up', self.setKeys, ['strafe_right', 0])
+        self.accept('mouse1', self.shoot)
         self.accept('mouse3', self.toggleFlashlight)
         #TODO: maknuti ovo
         self.accept('x', self.toggleMovement)
@@ -100,6 +104,14 @@ class Player(DirectObject):
         elif self.flashlight == False:
             self.flashlight = True
             render.setLight(self.slnp)
+    
+    def shoot(self):
+        if self.bullets > 0:
+            self.parent.parent.gameui.minusBullets()
+            self.bullet_objects.append(Bullet(self.node.getPos(), self.node.getHpr(), speed = 50, life=15))
+        else:
+            #TODO: mozda dodati zvuk praznog pistolja?
+            None
     
     def setKeys(self, key, value):
         self.keys[key] = value    
@@ -148,4 +160,10 @@ class Player(DirectObject):
     
             self.node.setFluidZ(TILE_SIZE*ASPECT/1.5)
             self.node.setFluidPos(self.node, speed2, speed1, 0)
+        return task.cont
+    
+    def updateBullets(self, task):
+        for bullet in self.bullet_objects:
+            bullet.update(globalClock.getDt())
+   
         return task.cont

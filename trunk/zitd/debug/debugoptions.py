@@ -29,7 +29,7 @@ class DebugOptions(DirectObject):
         self.walls = True
         
         #spotlightpanel
-        #self.spot_light_panel = SpotlightPanel(self, self.parent.slight)
+        self.spot_light_panel = SpotlightPanel(self, self.parent.player.slight)
         
         base.accept('f1', self.toggleFps)
         base.accept('f2', self.toggleAmbientLight)
