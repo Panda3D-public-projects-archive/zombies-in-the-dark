@@ -166,6 +166,8 @@ class Level():
             self.lights.append(plnp)
             
     def lightTask(self, task):
+        if self.parent.parent.fsm.state == 'Pause':
+            return task.cont
         self.light_task_timer = self.light_task_timer + globalClock.getDt()
         if self.light_task_timer > self.light_task_time:
             if self.light_task_state:
