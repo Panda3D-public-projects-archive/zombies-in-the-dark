@@ -1,7 +1,9 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
+from direct.interval.SoundInterval import SoundInterval
 from utils import *
 from direct.showbase.DirectObject import DirectObject
+from direct.showbase import Audio3DManager
 from direct.gui.OnscreenText import OnscreenText
 from direct.gui.DirectGui import *
 from direct.actor.Actor import Actor
@@ -61,6 +63,14 @@ class Monster():
         self.action = 'stand'
         self.patrol_points = [(1,1), (4,11), (12,20), (18,4), (19,17)]
         taskMgr.doMethodLater(1, self.behaviourTask, 'behtask')
+        
+        #initialize 3d sound
+        audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], base.camera)
+        mySound = audio3d.loadSfx('audio/Mindless Zombie Awakening-SoundBible.com-255444348.wav')
+        audio3d.attachSoundToObject(mySound, self.node)
+        delay = Wait(15)
+        self.moan_sequence = Sequence(SoundInterval(mySound), delay).loop()
+        
 
     def moveSequence(self):
         move = Sequence()
@@ -91,3 +101,8 @@ class Monster():
                 
         return task.again
 
+    def pause(self):
+        self.moan_sequence.pause()
+        
+    def resume(self):
+        self.moan_sequence.resume()
