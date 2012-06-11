@@ -32,17 +32,6 @@ class Game(DirectObject):
         elif self.type == 'DEBUG':
             base.disableMouse()
             self.camera = CameraManager(self)
-        # Create player flashlight
-        self.slight = Spotlight('slight')
-        self.slight.setColor(VBase4(1, 1, 0.6, 1))
-        #self.lens = PerspectiveLens()
-        #self.slight.setLens(self.lens)
-        self.slnp = self.player.node.attachNewNode(self.slight)
-        self.slnp.node().getLens().setFov(55)
-        self.slnp.node().getLens().setNearFar(1, 10)
-        self.slight.setExponent(45)
-        self.slight.setAttenuation(Point3(0.737, 0.134, 0.001))
-        render.setLight(self.slnp)
         
         # Instance one monster
         self.baby = Monster(self, 'nos', (19,17))
