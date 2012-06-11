@@ -15,6 +15,12 @@ class Level():
         self.x_size = pnmi.getXSize()
         self.y_size = pnmi.getYSize()
         
+        # Load textures
+        self.tex = loader.loadTexture('models/tex.png')
+        self.ts_normal = TextureStage('wall_normal')
+        self.ts_normal.setMode(TextureStage.MNormal)
+        self.tex_normal = loader.loadTexture('models/wall_normal.png')
+        
         # Create dict for parenting geometry
         self.floor_node_dict = {}
         self.wall_node_dict = {}
@@ -115,7 +121,8 @@ class Level():
     
     def loadWall(self, x, y, type):
         model = loader.loadModel('models/wall')
-        model.setTexture(loader.loadTexture('models/tex.png'))
+        model.setTexture(self.tex)
+        model.setTexture(self.ts_normal, self.tex_normal)
         if type == 'TILE_WEST':
             model.setPos(x*TILE_SIZE+TILE_SIZE/2, y*TILE_SIZE, TILE_SIZE*ASPECT/2)
             model.setP(90)
@@ -163,7 +170,7 @@ class Level():
             plnp = self.rf_light_node.attachNewNode(plight)
             plnp.setPos(x*TILE_SIZE - TILE_SIZE/2, y*TILE_SIZE, 5)
             render.setLight(plnp)
-            self.lights.append(plnp)
+            self.lights.append(plight)
             
     def lightTask(self, task):
         if self.parent.parent.fsm.state == 'Pause':
@@ -172,13 +179,13 @@ class Level():
         if self.light_task_timer > self.light_task_time:
             if self.light_task_state:
                 for l in self.lights:
-                    render.clearLight(l)
+                    l.setAttenuation(Point3(1,1,1))
                 self.light_task_state = False
                 self.light_task_timer = 0
                 self.light_task_time = random.uniform(0.5, 1.5)                
             else:
                 for l in self.lights:
-                    render.setLight(l)
+                    l.setAttenuation(Point3(0, 0, 0.04))
                 self.light_task_state = True
                 self.light_task_timer = 0
                 self.light_task_time = random.randint(1, 4)
