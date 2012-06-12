@@ -1,5 +1,6 @@
 from panda3d.core import *
 from direct.showbase.DirectObject import DirectObject
+from utils import *
 
 COLL_PLAYER_WALL = BitMask32.bit(0)
 COLL_BULLET_WALL_MONSTER = BitMask32.bit(1)
@@ -79,8 +80,8 @@ class CollisionManager(DirectObject):
         
         monster_cn = entry.getIntoNodePath()
         monster = monster_cn.getPythonTag('node')
-        if monster.hp > 50:
-            monster.hp -= 50
+        if monster.hp > HEADSHOT_DAMAGE:
+            monster.hp -= HEADSHOT_DAMAGE
         else:
             monster_cn.clearPythonTag('node')
             monster.cn_body.node().clearPythonTag('node')
@@ -96,8 +97,8 @@ class CollisionManager(DirectObject):
 
         monster_cn = entry.getIntoNodePath()
         monster = monster_cn.getPythonTag('node')
-        if monster.hp > 40:
-            monster.hp -= 40
+        if monster.hp > BODYSHOT_DAMAGE:
+            monster.hp -= BODYSHOT_DAMAGE
         else:
             monster_cn.clearPythonTag('node')
             monster.cn_head.node().clearPythonTag('node')

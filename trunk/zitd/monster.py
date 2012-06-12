@@ -116,6 +116,7 @@ class Monster():
         self.node.removeNode()
 
         
-        
+    """
     def __del__(self):
-        print("Instance of Custom Class Alpha Removed")        
+        print("Instance of Custom Class Alpha Removed")
+    """        
