@@ -4,6 +4,7 @@ from utils import *
 
 COLL_PLAYER_WALL = BitMask32.bit(0)
 COLL_BULLET_WALL_MONSTER = BitMask32.bit(1)
+COLL_MONSTER_WALL = BitMask32.bit(2)
 
 class CollisionManager(DirectObject):
     def __init__(self, parent):
@@ -17,7 +18,7 @@ class CollisionManager(DirectObject):
         self.player_cn.show()
         
         # Create wall collision objects
-        self.parent.level.wall_node.setCollideMask(COLL_PLAYER_WALL | COLL_BULLET_WALL_MONSTER)        
+        self.parent.level.wall_node.setCollideMask(COLL_PLAYER_WALL | COLL_BULLET_WALL_MONSTER | COLL_MONSTER_WALL)        
         
         # FluidPusher will be used to handle player-wall collisions and automatically push player in the right direction
         self.pusher = CollisionHandlerFluidPusher()
@@ -39,6 +40,7 @@ class CollisionManager(DirectObject):
         self.accept('BulletCollisionNode-into-Wall', self.handleBulletWallCollision)
         self.accept('BulletCollisionNode-into-MonsterHeadCollisionNode', self.handleBulletMonsterHeadCollision)
         self.accept('BulletCollisionNode-into-MonsterBodyCollisionNode', self.handleBulletMonsterBodyCollision)
+        self.accept('MonsterBodyCollisionNode-into-Wall', self.handleMonsterWallCollision)
 
     def createBulletCollision(self, bullet):
         bullet.cn = bullet.node.attachNewNode(CollisionNode('BulletCollisionNode'))
@@ -57,12 +59,14 @@ class CollisionManager(DirectObject):
         monster.cn_body = monster.node.attachNewNode(CollisionNode('MonsterBodyCollisionNode'))
         monster.cn_body.node().addSolid(CollisionSphere(0, 0, 0, 1.5))
         monster.cn_body.node().setCollideMask(COLL_BULLET_WALL_MONSTER)
+        monster.cn_body.node().setFromCollideMask(COLL_MONSTER_WALL)
         monster.cn_body.node().setPythonTag('node', monster)
         #TODO: bolje podesiti collision sphere kad dodju pravi modeli
         monster.cn_body.setPos(0,0,-2)
         #TODO: maknuti        
         monster.cn_head.show()  
-        monster.cn_body.show()      
+        monster.cn_body.show()   
+        self.traverser.addCollider(monster.cn_body, self.coll_event)   
 
     def handleBulletWallCollision(self, entry):
         bullet_cn = entry.getFromNodePath()
@@ -105,3 +109,6 @@ class CollisionManager(DirectObject):
             monster.cn_head.node().clearPythonTag('node')
             monster.destroy()
         print monster.hp
+        
+    def handleMonsterWallCollision(self, entry):
+        print entry
