@@ -85,6 +85,7 @@ class CollisionManager(DirectObject):
         
         monster_cn = entry.getIntoNodePath()
         monster = monster_cn.getPythonTag('node')
+        monster.shot_head.play()
         if monster.hp > HEADSHOT_DAMAGE:
             monster.hp -= HEADSHOT_DAMAGE
         else:
@@ -102,6 +103,7 @@ class CollisionManager(DirectObject):
         
         monster_cn = entry.getIntoNodePath()
         monster = monster_cn.getPythonTag('node')
+        monster.shot_body.play()
         if monster.hp > BODYSHOT_DAMAGE:
             monster.hp -= BODYSHOT_DAMAGE
         else:
