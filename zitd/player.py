@@ -112,7 +112,7 @@ class Player(DirectObject):
     def shoot(self):
         if self.bullets > 0:
             self.parent.parent.gameui.minusBullets()
-            self.bullet_objects.append(Bullet(self.node.getPos(), self.node.getHpr(), speed = 50, life=15))
+            self.bullet_objects.append(Bullet(self, self.node.getHpr(), speed = 150, life=15))
             self.shoot_sound.play()
         else:
             self.gun_click_sound.play()

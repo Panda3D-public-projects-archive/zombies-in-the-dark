@@ -1,9 +1,10 @@
 from panda3d.core import *
 
 class Bullet(object):    
-    def __init__(self, pos, hpr, speed, life):
+    def __init__(self, parent, hpr, speed, life):
         self.node = loader.loadModel("models/nos")
-        self.node.setPosHpr(pos, hpr)
+        self.node.setPos(parent.node, 0, 1, 0)
+        self.node.setHpr(hpr)
         self.node.reparentTo(render)
         self.node.setScale(0.1)
         self.speed = speed
