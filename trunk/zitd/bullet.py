@@ -1,15 +1,19 @@
 from panda3d.core import *
+from utils import *
 
 class Bullet(object):    
-    def __init__(self, parent, hpr, speed, life):
+    def __init__(self, parent, hpr, speed=450, life=15):
         self.node = loader.loadModel("models/nos")
         self.node.setPos(parent.node, 0, 1, 0)
         self.node.setHpr(hpr)
         self.node.reparentTo(render)
         self.node.setScale(0.1)
+        self.node.setColor(1,0,0)
         self.speed = speed
         self.life = life
         self.alive = True
+        
+        parent.parent.collision_manager.createBulletCollision(self)
    
     def update(self, dt):
         if not self.alive:

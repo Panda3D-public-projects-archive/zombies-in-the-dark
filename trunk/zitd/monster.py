@@ -71,6 +71,7 @@ class Monster():
         delay = Wait(15)
         self.moan_sequence = Sequence(SoundInterval(mySound), delay).loop()
         
+        self.parent.collision_manager.createMonsterCollision(self)
 
     def moveSequence(self):
         move = Sequence()
@@ -90,6 +91,7 @@ class Monster():
         self.action = action
 
     def behaviourTask(self, task):
+        #return task.cont
         if self.action == 'stand':
             if random.randint(0, 100) < 20:
                 self.action = 'patrol'
