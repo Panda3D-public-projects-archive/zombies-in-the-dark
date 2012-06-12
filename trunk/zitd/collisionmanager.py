@@ -68,15 +68,16 @@ class CollisionManager(DirectObject):
         bullet_cn = entry.getFromNodePath()
         bullet = bullet_cn.getPythonTag('node')
         bullet_cn.clearPythonTag('node')
-        bullet.destroy()  
         self.parent.player.bullet_objects.remove(bullet)
+        bullet.destroy()  
+        
         
     def handleBulletMonsterHeadCollision(self, entry):
         bullet_cn = entry.getFromNodePath()
         bullet = bullet_cn.getPythonTag('node')
         bullet_cn.clearPythonTag('node')
-        bullet.destroy() 
         self.parent.player.bullet_objects.remove(bullet)
+        bullet.destroy() 
         
         monster_cn = entry.getIntoNodePath()
         monster = monster_cn.getPythonTag('node')
@@ -92,9 +93,9 @@ class CollisionManager(DirectObject):
         bullet_cn = entry.getFromNodePath()
         bullet = bullet_cn.getPythonTag('node')
         bullet_cn.clearPythonTag('node')
-        bullet.destroy()        
         self.parent.player.bullet_objects.remove(bullet)
-
+        bullet.destroy()        
+        
         monster_cn = entry.getIntoNodePath()
         monster = monster_cn.getPythonTag('node')
         if monster.hp > BODYSHOT_DAMAGE:
