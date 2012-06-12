@@ -57,10 +57,16 @@ class Monster():
         
         #initialize 3d sound
         self.audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], base.camera)
-        self.mySound = self.audio3d.loadSfx('audio/Mindless Zombie Awakening-SoundBible.com-255444348.wav')
-        self.audio3d.attachSoundToObject(self.mySound, self.node)
+        self.shot_head = self.audio3d.loadSfx('audio/Zombie In Pain-SoundBible.com-134322253.wav')
+        self.shot_body = self.audio3d.loadSfx('audio/Zombie Moan-SoundBible.com-565291980.wav')
+        self.moan1 = self.audio3d.loadSfx('audio/Mindless Zombie Awakening-SoundBible.com-255444348.wav')
+        self.moan2 = self.audio3d.loadSfx('audio/Zombie Brain Eater-SoundBible.com-1076387080.wav')
+        self.audio3d.attachSoundToObject(self.moan1, self.node)
+        self.audio3d.attachSoundToObject(self.moan2, self.node)
+        self.audio3d.attachSoundToObject(self.shot_head, self.node)
+        self.audio3d.attachSoundToObject(self.shot_body, self.node)
         delay = Wait(15)
-        self.moan_sequence = Sequence(SoundInterval(self.mySound), delay).loop()
+        self.moan_sequence = Sequence(SoundInterval(self.moan1), delay, SoundInterval(self.moan2), delay).loop()
         self.moan_sequence = None
         self.move_sequence = None
         
@@ -107,7 +113,10 @@ class Monster():
         self.moan_sequence.resume()
         
     def destroy(self):
-        self.audio3d.detachSound(self.mySound)
+        self.audio3d.detachSound(self.moan1)
+        self.audio3d.detachSound(self.moan2)
+        self.audio3d.detachSound(self.shot_head)
+        self.audio3d.detachSound(self.shot_body)
         if self.moan_sequence != None:
             self.moan_sequence.pause()
             self.moan_sequence = None
