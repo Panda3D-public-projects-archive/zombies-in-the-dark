@@ -82,7 +82,6 @@ class Monster():
         self.action = action
 
     def behaviourTask(self, task):
-        return task.cont
         if self.action == 'stand':
             if random.randint(0, 100) < 20:
                 self.action = 'patrol'
@@ -104,10 +103,10 @@ class Monster():
     def destroy(self):
         self.audio3d.detachSound(self.mySound)
         if self.moan_sequence != None:
-            self.moan_sequence.stop()
+            self.moan_sequence.pause()
             self.moan_sequence = None
         if self.move_sequence != None:
-            self.move_sequence.stop()
+            self.move_sequence.pause()
             self.move_sequence = None    
         taskMgr.remove('behtask')
         #TODO: vratiti kad bude Actor
