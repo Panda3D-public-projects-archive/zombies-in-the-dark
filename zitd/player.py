@@ -31,13 +31,6 @@ class Player(DirectObject):
         props.setCursorHidden(True) 
         base.win.requestProperties(props)
         
-        self.cn = self.node.attachNewNode(CollisionNode('PlayerCollisionNode'))
-        self.cn.node().addSolid(CollisionSphere(0, 0, 0, 1.8))
-        self.cn.node().setFromCollideMask( CollisionNode.getDefaultCollideMask() )
-        self.cn.show()
-        #cn.node().setFromCollideMask(BitMask32(COLLIDE_PLAYER_MASK))
-        #cn.node().setIntoCollideMask(BitMask32.allOff()) 
-        
         # Create player flashlight
         self.slight = Spotlight('slight')
         self.slight.setColor(VBase4(1, 1, 0.6, 1))
@@ -112,7 +105,7 @@ class Player(DirectObject):
     def shoot(self):
         if self.bullets > 0:
             self.parent.parent.gameui.minusBullets()
-            self.bullet_objects.append(Bullet(self, self.node.getHpr(), speed = 150, life=15))
+            self.bullet_objects.append(Bullet(self, self.node.getHpr()))
             self.shoot_sound.play()
         else:
             self.gun_click_sound.play()

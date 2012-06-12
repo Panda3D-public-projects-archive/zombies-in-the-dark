@@ -7,6 +7,7 @@ from player import Player
 from utils import *
 from level import Level
 from monster import Monster
+from collisionmanager import CollisionManager
 
 class Game(DirectObject):
     def __init__(self, parent):
@@ -33,23 +34,17 @@ class Game(DirectObject):
             base.disableMouse()
             self.camera = CameraManager(self)
         
-        # Instance one monster
-        self.baby = Monster(self, 'nos', (19,17))
-        
         # Create ambient light
         self.alight = AmbientLight("alight")
         self.alnp = render.attachNewNode(self.alight)
         render.setLight(self.alnp)
         
-        # Instance collision objects
-        self.pusher = CollisionHandlerFluidPusher()
-        self.pusher.addCollider(self.player.cn, self.player.node)
-        self.traverser = CollisionTraverser()
-        self.traverser.addCollider(self.player.cn, self.pusher)
-        self.traverser.setRespectPrevTransform(True) 
-        base.cTrav = self.traverser
-        #base.cTrav.showCollisions(render)
-        self.level.wall_node.setCollideMask(BitMask32.bit(0))
+        # Instance collision manager
+        self.collision_manager = CollisionManager(self)
+        #messenger.toggleVerbose()
+        
+        # Instance one monster (needs to be done after setting up collision manager
+        self.baby = Monster(self, 'nos', (9,14))
         
         # Instance class for debug output
         self.debug = DebugOptions(self)
