@@ -49,9 +49,11 @@ class Monster():
             self.node.setColor(1,0,0)
             self.node.reparentTo(render)
 
-        self.action = 'stand'
+        #TODO: stavljamo patrol da se ne okida task 'behtask'
+        self.action = 'patrol'
         self.patrol_points = [(1,1), (4,11), (12,20), (18,4), (19,17)]
         taskMgr.doMethodLater(1, self.behaviourTask, 'behtask')
+        taskMgr.doMethodLater(1, self.debugMoveTask, 'DebugMoveMonsterTask')
         
         #initialize 3d sound
         self.audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], base.camera)
@@ -93,6 +95,10 @@ class Monster():
                 self.move_sequence.start()
                 
         return task.again
+    
+    def debugMoveTask(self, task):
+        self.node.setPos(self.node, 0, 1*globalClock.getDt(), 0)
+        return task.cont
 
     def pause(self):
         self.moan_sequence.pause()
@@ -109,6 +115,7 @@ class Monster():
             self.move_sequence.pause()
             self.move_sequence = None    
         taskMgr.remove('behtask')
+        taskMgr.remove('DebugMoveMonsterTask')
         #TODO: vratiti kad bude Actor
         #self.node.delete()
         #self.node.cleanup()
