@@ -44,7 +44,7 @@ class Game(DirectObject):
         #messenger.toggleVerbose()
         
         # Instance one monster (needs to be done after setting up collision manager
-        self.baby = Monster(self, 'nos', (9,14))
+        Monster(self, 'nos', (9,14))
         
         # Instance class for debug output
         self.debug = DebugOptions(self)

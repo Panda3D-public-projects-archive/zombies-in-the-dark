@@ -54,11 +54,13 @@ class Monster():
         taskMgr.doMethodLater(1, self.behaviourTask, 'behtask')
         
         #initialize 3d sound
-        audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], base.camera)
-        mySound = audio3d.loadSfx('audio/Mindless Zombie Awakening-SoundBible.com-255444348.wav')
-        audio3d.attachSoundToObject(mySound, self.node)
+        self.audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], base.camera)
+        self.mySound = self.audio3d.loadSfx('audio/Mindless Zombie Awakening-SoundBible.com-255444348.wav')
+        self.audio3d.attachSoundToObject(self.mySound, self.node)
         delay = Wait(15)
-        self.moan_sequence = Sequence(SoundInterval(mySound), delay).loop()
+        self.moan_sequence = Sequence(SoundInterval(self.mySound), delay).loop()
+        self.moan_sequence = None
+        self.move_sequence = None
         
         self.parent.collision_manager.createMonsterCollision(self)
 
@@ -88,7 +90,8 @@ class Monster():
                 while self.dest == self.pos:
                     self.dest = self.patrol_points[random.randint(0,4)]
                 self.path = pathFind(self.parent.level, self.pos, self.dest)
-                self.moveSequence().start()
+                self.move_sequence = self.moveSequence()
+                self.move_sequence.start()
                 
         return task.again
 
@@ -97,3 +100,22 @@ class Monster():
         
     def resume(self):
         self.moan_sequence.resume()
+        
+    def destroy(self):
+        self.audio3d.detachSound(self.mySound)
+        if self.moan_sequence != None:
+            self.moan_sequence.stop()
+            self.moan_sequence = None
+        if self.move_sequence != None:
+            self.move_sequence.stop()
+            self.move_sequence = None    
+        taskMgr.remove('behtask')
+        #TODO: vratiti kad bude Actor
+        #self.node.delete()
+        #self.node.cleanup()
+        self.node.removeNode()
+
+        
+        
+    def __del__(self):
+        print("Instance of Custom Class Alpha Removed")        
