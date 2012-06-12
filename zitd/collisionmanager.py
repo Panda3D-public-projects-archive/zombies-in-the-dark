@@ -79,7 +79,12 @@ class CollisionManager(DirectObject):
         
         monster_cn = entry.getIntoNodePath()
         monster = monster_cn.getPythonTag('node')
-        monster.hp -= 50
+        if monster.hp > 50:
+            monster.hp -= 50
+        else:
+            monster_cn.clearPythonTag('node')
+            monster.cn_body.node().clearPythonTag('node')
+            monster.destroy()
         print monster.hp
         
     def handleBulletMonsterBodyCollision(self, entry):
@@ -91,5 +96,10 @@ class CollisionManager(DirectObject):
 
         monster_cn = entry.getIntoNodePath()
         monster = monster_cn.getPythonTag('node')
-        monster.hp -= 40
+        if monster.hp > 40:
+            monster.hp -= 40
+        else:
+            monster_cn.clearPythonTag('node')
+            monster.cn_head.node().clearPythonTag('node')
+            monster.destroy()
         print monster.hp
