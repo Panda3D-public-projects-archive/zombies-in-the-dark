@@ -1,6 +1,7 @@
 from panda3d.core import *
 from direct.showbase.ShowBase import ShowBase#@UnresolvedImport
 from direct.showbase.DirectObject import DirectObject
+from direct.filter.CommonFilters import CommonFilters
 from debug.debugoptions import DebugOptions
 from debug.cameramanager import CameraManager
 from player import Player
@@ -49,11 +50,23 @@ class Game(DirectObject):
         # Instance class for debug output
         self.debug = DebugOptions(self)
         
+        # Instance common filters class (blur, AO, bloom)
+        self.filters = CommonFilters(base.win, base.cam)
+        
         # Debug
         #PStatClient.connect()
         #meter = SceneGraphAnalyzerMeter('meter', render.node())
         #meter.setupWindow(base.win) 
-    
+        
+        """
+        self.heart_sound = base.loader.loadSfx("audio/Hearbeat_2-Mike_Koenig-143666461.wav")
+        self.heart_sound.setLoop(True)
+        self.heart_sound.play()
+        self.heart_sound.setVolume(0.4)
+        self.heart_sound.setPlayRate(0.7)
+        print self.heart_sound.getPlayRate()
+        """
+        
     def pause(self):
         self.player.clearKeyEvents()
         self.player.disconnectMouse()

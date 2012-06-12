@@ -49,6 +49,10 @@ class Player(DirectObject):
         self.shoot_sound = base.loader.loadSfx("audio/GUN_FIRE-GoodSoundForYou-820112263.wav")
         self.gun_click_sound = base.loader.loadSfx("audio/Dry Fire Gun-SoundBible.com-2053652037.wav")
         
+        self.scratches = loadImageAsPlane('models/scr.png')
+        self.scratches.setTransparency(TransparencyAttrib.MAlpha) 
+        self.damage_anim = Parallel()
+        
         self.keys = {}
         self.keys['forward'] = 0
         self.keys['back'] = 0
@@ -113,6 +117,29 @@ class Player(DirectObject):
         else:
             self.gun_click_sound.play()
             None
+            
+    def getDamage(self):
+        self.damage_anim.finish()
+        
+        # set up scratches interval
+        s1 = Sequence(Func(self.scratches.reparentTo, aspect2d), 
+                     LerpColorInterval(self.scratches, duration=1, color=Vec4(1,1,1,0)), 
+                     Func(self.scratches.detachNode),
+                     Func(self.scratches.setColor, Vec4(1,1,1,1)))
+        
+        # set up recoil interval
+        starthpr = self.node.getHpr()
+        dh = random.uniform(-10,10)
+        dp = random.uniform(-10,10)
+        d2h = random.uniform(0, -dh)
+        d2p = random.uniform(0, -dp)
+        hpr1 = starthpr+Vec3(dh, dp, 0)
+        hpr2 = hpr1+Vec3(d2h, d2p, 0)
+        s2 = Sequence(LerpHprInterval(self.node,hpr=hpr1, duration = 0.05), LerpHprInterval(self.node,hpr=hpr2, duration = 0.05))
+        self.damage_anim.append(s1)
+        self.damage_anim.append(s2)
+        
+        self.damage_anim.start()
     
     def setKeys(self, key, value):
         self.keys[key] = value    
