@@ -34,7 +34,7 @@ class CollisionManager(DirectObject):
         base.cTrav = self.traverser
         
         # For debug purposes show collisions
-        base.cTrav.showCollisions(render)
+        #base.cTrav.showCollisions(render)
         
         self.accept('BulletCollisionNode-into-Wall', self.handleBulletWallCollision)
         self.accept('BulletCollisionNode-into-MonsterHeadCollisionNode', self.handleBulletMonsterHeadCollision)

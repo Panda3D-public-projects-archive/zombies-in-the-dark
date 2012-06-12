@@ -7,6 +7,8 @@ from panda3d.core import WindowProperties
 from panda3d.core import *
 from utils import *
 from bullet import Bullet
+import random
+from direct.interval.IntervalGlobal import *
 
 class Player(DirectObject):
     def __init__(self, parent, pos):
@@ -106,6 +108,7 @@ class Player(DirectObject):
         if self.bullets > 0:
             self.parent.parent.gameui.minusBullets()
             self.bullet_objects.append(Bullet(self, self.node.getHpr()))
+            self.gunRecoil()
             self.shoot_sound.play()
         else:
             self.gun_click_sound.play()
@@ -113,6 +116,17 @@ class Player(DirectObject):
     
     def setKeys(self, key, value):
         self.keys[key] = value    
+        
+    def gunRecoil(self):
+        starthpr = self.node.getHpr()
+        dh = random.uniform(-5,5)
+        dp = random.uniform(-5,5)
+        d2h = random.uniform(0, -dh)
+        d2p = random.uniform(0, -dp)
+        hpr1 = starthpr+Vec3(dh, dp, 0)
+        hpr2 = hpr1+Vec3(d2h, d2p, 0)
+        s = Sequence(LerpHprInterval(self.node,hpr=hpr1, duration = 0.05), LerpHprInterval(self.node,hpr=hpr2, duration = 0.05))
+        s.start()
     
     def updatePlayer(self, task):
         if self.can_move == False:
