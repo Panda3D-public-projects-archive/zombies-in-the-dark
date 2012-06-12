@@ -16,10 +16,37 @@ class Level():
         self.y_size = pnmi.getYSize()
         
         # Load textures
-        self.tex = loader.loadTexture('models/tex.png')
         self.ts_normal = TextureStage('wall_normal')
         self.ts_normal.setMode(TextureStage.MNormal)
-        self.tex_normal = loader.loadTexture('models/wall_normal.png')
+        self.ts_gloss = TextureStage('wall_gloss')
+        self.ts_gloss.setMode(TextureStage.MGloss)  
+        self.ts_glow = TextureStage('wall_glow')
+        self.ts_glow.setMode(TextureStage.MGlow)              
+        
+        self.tex = loader.loadTexture('models/pk02_wall02a_C.tga')
+        self.tex_normal = loader.loadTexture('models/pk02_wall02a_N.tga')
+        self.tex_gloss = loader.loadTexture('models/pk02_wall02a_S1.tga')
+        self.tex_glow = loader.loadTexture('models/pk02_wall02a_I1.tga')
+        
+        self.tex_ceil = loader.loadTexture('models/pk02_ceiling03_C.tga')
+        self.tex_ceil_normal = loader.loadTexture('models/pk02_ceiling03_N.tga')
+        self.tex_ceil_gloss = loader.loadTexture('models/pk02_ceiling03_S1.tga')        
+        
+        self.tex.setMagfilter(Texture.FTLinearMipmapLinear)
+        self.tex.setMinfilter(Texture.FTLinearMipmapLinear)
+        self.tex_normal.setMagfilter(Texture.FTLinearMipmapLinear)
+        self.tex_normal.setMinfilter(Texture.FTLinearMipmapLinear)
+        self.tex_gloss.setMagfilter(Texture.FTLinearMipmapLinear)
+        self.tex_gloss.setMinfilter(Texture.FTLinearMipmapLinear)
+        self.tex_glow.setMagfilter(Texture.FTLinearMipmapLinear)
+        self.tex_glow.setMinfilter(Texture.FTLinearMipmapLinear)                        
+
+        self.tex_ceil.setMagfilter(Texture.FTLinearMipmapLinear)
+        self.tex_ceil.setMinfilter(Texture.FTLinearMipmapLinear)
+        self.tex_ceil_normal.setMagfilter(Texture.FTLinearMipmapLinear)
+        self.tex_ceil_normal.setMinfilter(Texture.FTLinearMipmapLinear)
+        self.tex_ceil_gloss.setMagfilter(Texture.FTLinearMipmapLinear)
+        self.tex_ceil_gloss.setMinfilter(Texture.FTLinearMipmapLinear)
         
         # Create dict for parenting geometry
         self.floor_node_dict = {}
@@ -123,6 +150,8 @@ class Level():
         model = loader.loadModel('models/wall')
         model.setTexture(self.tex)
         model.setTexture(self.ts_normal, self.tex_normal)
+        model.setTexture(self.ts_gloss, self.tex_gloss)
+        model.setTexture(self.ts_glow, self.tex_glow)
         if type == 'TILE_WEST':
             model.setPos(x*TILE_SIZE+TILE_SIZE/2, y*TILE_SIZE, TILE_SIZE*ASPECT/2)
             model.setP(90)
@@ -142,13 +171,15 @@ class Level():
     
     def loadFloor(self, x, y, type):
         model = loader.loadModel('models/floor')
-        model.setTexture(loader.loadTexture('models/tex.png'))
         if type == 'TILE_CEIL':
             model.setPos(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE*ASPECT)
             model.setP(180)
+            model.setTexture(self.tex_ceil)
+            model.setTexture(self.ts_normal, self.tex_ceil_normal)
+            model.setTexture(self.ts_gloss, self.tex_ceil_gloss)     
         elif type == 'TILE_FLOOR':
             model.setPos(x*TILE_SIZE, y*TILE_SIZE, 0)
-            #model.setP(-90)
+            model.setTexture(loader.loadTexture('models/tex.png'))
         return model
     
     def loadDoor(self, x, y, type):
