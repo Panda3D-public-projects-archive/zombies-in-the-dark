@@ -26,6 +26,10 @@ class DebugOptions(DirectObject):
         taskMgr.add(self.refreshPlayerPos, 'RefreshPlayerPosTask')
         self.textPlayerPos.reparentTo(base.a2dTopLeft)
         
+        self.bloom = False
+        self.blur = False
+        self.ao = False
+        
         self.walls = True
         
         #spotlightpanel
@@ -34,8 +38,12 @@ class DebugOptions(DirectObject):
         base.accept('f1', self.toggleFps)
         base.accept('f2', self.toggleAmbientLight)
         base.accept('f3', self.toggleFlashlightFrustum)
+        base.accept('f4', self.parent.player.getDamage)
         base.accept('f5', self.toggleAutoShader)
         base.accept('f6', self.togglePlayerPos)
+        base.accept('f7', self.toggleBloom)
+        base.accept('f8', self.toggleBlur)
+        base.accept('f9', self.toggleAO)
         base.accept('f10', self.toggleWalls)
         base.accept('f11', render.analyze)
         base.accept('f12', self.debugPrint)
@@ -90,6 +98,30 @@ class DebugOptions(DirectObject):
             taskMgr.remove('RefreshPlayerPosTask')
             self.textPlayerPos.detachNode() 
             
+    def toggleBloom(self):
+        if self.bloom == False:
+            self.bloom = True
+            self.parent.filters.setBloom()
+        else:
+            self.bloom = False
+            self.parent.filters.delBloom()   
+            
+    def toggleBlur(self):
+        if self.blur == False:
+            self.blur = True
+            self.parent.filters.setBlurSharpen()
+        else:
+            self.blur = False
+            self.parent.filters.delBlurSharpen() 
+            
+    def toggleAO(self):
+        if self.ao == False:
+            self.ao = True
+            self.parent.filters.setAmbientOcclusion()
+        else:
+            self.ao = False
+            self.parent.filters.delAmbientOcclusion()             
+        
     def refreshPlayerPos(self, task):
         px, py, pz = self.parent.player.node.getPos()
         self.textPlayerPos.setText('Player pos: (%0.3f, %0.3f, %0.3f)' % (px, py, pz))
