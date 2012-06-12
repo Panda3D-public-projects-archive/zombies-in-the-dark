@@ -49,17 +49,6 @@ class Monster():
             self.node.setColor(1,0,0)
             self.node.reparentTo(render)
 
-        """
-        segs = LineSegs()
-        segs.setThickness(23)
-        segs.setColor(VBase4(1,0,0,1))
-        segs.moveTo(0,0,0)
-        segs.drawTo(0,30,0)
-        self.linenode = self.node.attachNewNode(segs.create())
-        self.linenode.setPos(0,0,35)
-        self.linenode.setScale(5)
-        self.linenode.setLightOff()
-        """
         self.action = 'stand'
         self.patrol_points = [(1,1), (4,11), (12,20), (18,4), (19,17)]
         taskMgr.doMethodLater(1, self.behaviourTask, 'behtask')
@@ -91,7 +80,7 @@ class Monster():
         self.action = action
 
     def behaviourTask(self, task):
-        #return task.cont
+        return task.cont
         if self.action == 'stand':
             if random.randint(0, 100) < 20:
                 self.action = 'patrol'

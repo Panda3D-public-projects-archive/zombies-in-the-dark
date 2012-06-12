@@ -43,6 +43,7 @@ class CollisionManager(DirectObject):
         bullet.cn = bullet.node.attachNewNode(CollisionNode('BulletCollisionNode'))
         bullet.cn.node().addSolid(CollisionSphere(0, 0, 0, 1.1))
         bullet.cn.node().setFromCollideMask(COLL_BULLET_WALL_MONSTER)
+        bullet.cn.node().setPythonTag('node', bullet)
         #TODO: maknuti
         bullet.cn.show()        
         self.traverser.addCollider(bullet.cn, self.coll_event)
@@ -51,9 +52,11 @@ class CollisionManager(DirectObject):
         monster.cn_head = monster.node.attachNewNode(CollisionNode('MonsterHeadCollisionNode'))
         monster.cn_head.node().addSolid(CollisionSphere(0, 0, 0, 1.5))
         monster.cn_head.node().setCollideMask(COLL_BULLET_WALL_MONSTER)
+        monster.cn_head.node().setPythonTag('node', monster)
         monster.cn_body = monster.node.attachNewNode(CollisionNode('MonsterBodyCollisionNode'))
         monster.cn_body.node().addSolid(CollisionSphere(0, 0, 0, 1.5))
         monster.cn_body.node().setCollideMask(COLL_BULLET_WALL_MONSTER)
+        monster.cn_body.node().setPythonTag('node', monster)
         #TODO: bolje podesiti collision sphere kad dodju pravi modeli
         monster.cn_body.setPos(0,0,-2)
         #TODO: maknuti        
@@ -61,10 +64,32 @@ class CollisionManager(DirectObject):
         monster.cn_body.show()      
 
     def handleBulletWallCollision(self, entry):
-        print entry       
+        bullet_cn = entry.getFromNodePath()
+        bullet = bullet_cn.getPythonTag('node')
+        bullet_cn.clearPythonTag('node')
+        bullet.destroy()  
+        self.parent.player.bullet_objects.remove(bullet)
         
     def handleBulletMonsterHeadCollision(self, entry):
-        print "HEAD!" 
+        bullet_cn = entry.getFromNodePath()
+        bullet = bullet_cn.getPythonTag('node')
+        bullet_cn.clearPythonTag('node')
+        bullet.destroy() 
+        self.parent.player.bullet_objects.remove(bullet)
+        
+        monster_cn = entry.getIntoNodePath()
+        monster = monster_cn.getPythonTag('node')
+        monster.hp -= 50
+        print monster.hp
         
     def handleBulletMonsterBodyCollision(self, entry):
-        print "Body"         
+        bullet_cn = entry.getFromNodePath()
+        bullet = bullet_cn.getPythonTag('node')
+        bullet_cn.clearPythonTag('node')
+        bullet.destroy()        
+        self.parent.player.bullet_objects.remove(bullet)
+
+        monster_cn = entry.getIntoNodePath()
+        monster = monster_cn.getPythonTag('node')
+        monster.hp -= 40
+        print monster.hp

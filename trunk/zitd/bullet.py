@@ -24,5 +24,8 @@ class Bullet(object):
         if self.life > 0:
             self.node.setFluidY(self.node, self.speed * dt)
         else:
-            self.node.removeNode()
-            self.alive = False
+            self.destroy()
+            
+    def destroy(self):
+        self.node.removeNode()
+        self.alive = False
