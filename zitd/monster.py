@@ -60,11 +60,15 @@ class Monster():
             self.zpos = 0
             self.node.setPos(pos[0]*TILE_SIZE,pos[1]*TILE_SIZE,self.zpos)
             self.node.setScale(0.03)
-            self.node.setTexture(loader.loadTexture('models/Zomby_D.tga'))
+            self.node.setTexture(loader.loadTexture('models/Zomby_D.png'))
             self.ts_normal = TextureStage('ts_normal')
-            self.tex_normal = loader.loadTexture('models/Zomby_N.tga')
+            self.tex_normal = loader.loadTexture('models/Zomby_N.png')
             self.ts_normal.setMode(TextureStage.MNormal)
             self.node.setTexture(self.ts_normal, self.tex_normal)
+            self.ts_gloss = TextureStage('ts_gloss')
+            self.tex_gloss = loader.loadTexture('models/Zomby_S1.png')
+            self.ts_gloss.setMode(TextureStage.MGloss)
+            self.node.setTexture(self.ts_gloss, self.tex_gloss)            
             self.node.reparentTo(render) 
             self.node.loop('stand')
         elif type == 'nos':
