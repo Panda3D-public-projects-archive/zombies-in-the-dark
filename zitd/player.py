@@ -28,6 +28,8 @@ class Player(DirectObject):
         self.max_bullets = 10
         self.bullets = 4
         self.bullet_objects = []
+        self.sprint = False
+        self.moving = False
         
         props = WindowProperties()
         props.setCursorHidden(True) 
@@ -219,6 +221,11 @@ class Player(DirectObject):
             if self.keys['strafe_right']:
                 speed2 = self.speed * globalClock.getDt()
     
+            if speed1 or speed2:
+                self.moving = True
+            else:
+                self.moving = False
+    
             self.node.setFluidZ(TILE_SIZE*ASPECT/1.5)
             self.node.setFluidPos(self.node, speed2, speed1, 0)
         
@@ -234,6 +241,11 @@ class Player(DirectObject):
             if self.keys['strafe_right']:
                 speed2 = self.speed * globalClock.getDt()
     
+            if speed1 or speed2:
+                self.moving = True
+            else:
+                self.moving = False
+                
             self.node.setFluidZ(TILE_SIZE*ASPECT/1.5)
             self.node.setFluidPos(self.node, speed2, speed1, 0)
         return task.cont
