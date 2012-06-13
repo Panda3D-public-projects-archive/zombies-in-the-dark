@@ -120,6 +120,7 @@ class Player(DirectObject):
             
     def getDamage(self, damage=1):
         self.damage_anim.finish()
+        self.damage_anim = Parallel()
         
         # player got damage but is still alive
         if self.health - damage > 0:
@@ -138,8 +139,9 @@ class Player(DirectObject):
             hpr1 = starthpr+Vec3(dh, dp, 0)
             hpr2 = hpr1+Vec3(d2h, d2p, 0)
             s2 = Sequence(Func(self.toggleMovement),
-                          LerpHprInterval(self.node,hpr=hpr1, duration = 0.05),
-                          Func(self.toggleMovement))#, LerpHprInterval(self.node,hpr=hpr2, duration = 0.05))
+                          self.node.quatInterval(hpr=hpr1, startHpr=starthpr, duration = 0.03),
+                          self.node.quatInterval(hpr=hpr2, startHpr=hpr1, duration = 0.03),
+                          Func(self.toggleMovement))
             self.damage_anim.append(s1)
             self.damage_anim.append(s2)
             
@@ -183,7 +185,8 @@ class Player(DirectObject):
         d2p = random.uniform(0, -dp)
         hpr1 = starthpr+Vec3(dh, dp, 0)
         hpr2 = hpr1+Vec3(d2h, d2p, 0)
-        s = Sequence(LerpHprInterval(self.node,hpr=hpr1, duration = 0.05), LerpHprInterval(self.node,hpr=hpr2, duration = 0.05))
+        s = Sequence(self.node.quatInterval(hpr=hpr1, startHpr=starthpr, duration = 0.05),
+                     self.node.quatInterval(hpr=hpr2, startHpr=hpr1, duration = 0.05))
         s.start()
     
     def updatePlayer(self, task):
