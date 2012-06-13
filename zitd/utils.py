@@ -42,7 +42,9 @@ def d( num ):
     return random.randint(1,num)
 
 def getTile( pos ):
-    return ( int(pos[0]/TILE_SIZE), int(pos[1]/TILE_SIZE) )
+    xpos = int( (pos[0]+TILE_SIZE/2) /TILE_SIZE)
+    ypos = int( (pos[1]+TILE_SIZE/2) /TILE_SIZE)
+    return ( xpos, ypos )
     
     
     
