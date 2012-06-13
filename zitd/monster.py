@@ -243,7 +243,8 @@ class Monster():
             return task.cont
         
         if self.action == ACTION_CHASE:
-            self.node.lookAt( self.player_last_seen_abs )
+            look_pos = Point3(self.player_last_seen_abs.getX(), self.player_last_seen_abs.getY(), self.zpos)
+            self.node.lookAt( look_pos )
             self.node.setPos(self.node, 0, CHASE_SPEED*globalClock.getDt(), 0)
                         
             if self.distanceToPlayer() <= MELEE_RANGE and self.angleToPlayerAbs() <= 45:
