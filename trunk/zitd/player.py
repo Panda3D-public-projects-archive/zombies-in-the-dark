@@ -24,7 +24,7 @@ class Player(DirectObject):
         self.camera = True
         self.mouse_owner = True
         self.max_health = 100
-        self.health = 100
+        self.health = self.max_health
         self.max_bullets = 10
         self.bullets = 4
         self.bullet_objects = []
@@ -118,29 +118,57 @@ class Player(DirectObject):
             self.gun_click_sound.play()
             None
             
-    def getDamage(self):
+    def getDamage(self, damage=30):
         self.damage_anim.finish()
         
-        # set up scratches interval
-        s1 = Sequence(Func(self.scratches.reparentTo, aspect2d), 
-                     LerpColorInterval(self.scratches, duration=1, color=Vec4(1,1,1,0)), 
-                     Func(self.scratches.detachNode),
-                     Func(self.scratches.setColor, Vec4(1,1,1,1)))
-        
-        # set up recoil interval
-        starthpr = self.node.getHpr()
-        dh = random.uniform(-10,10)
-        dp = random.uniform(-10,10)
-        d2h = random.uniform(0, -dh)
-        d2p = random.uniform(0, -dp)
-        hpr1 = starthpr+Vec3(dh, dp, 0)
-        hpr2 = hpr1+Vec3(d2h, d2p, 0)
-        s2 = Sequence(LerpHprInterval(self.node,hpr=hpr1, duration = 0.05), LerpHprInterval(self.node,hpr=hpr2, duration = 0.05))
-        self.damage_anim.append(s1)
-        self.damage_anim.append(s2)
-        
-        self.damage_anim.start()
-        print "demidjo me!"
+        # player got damage but is still alive
+        if self.health - damage > 0:
+            # set up scratches interval
+            s1 = Sequence(Func(self.scratches.reparentTo, aspect2d), 
+                         LerpColorInterval(self.scratches, duration=1, color=Vec4(1,1,1,0)), 
+                         Func(self.scratches.detachNode),
+                         Func(self.scratches.setColor, Vec4(1,1,1,1)))
+            
+            # set up recoil interval
+            starthpr = self.node.getHpr()
+            dh = random.uniform(-10,10)
+            dp = random.uniform(-10,10)
+            d2h = random.uniform(0, -dh)
+            d2p = random.uniform(0, -dp)
+            hpr1 = starthpr+Vec3(dh, dp, 0)
+            hpr2 = hpr1+Vec3(d2h, d2p, 0)
+            s2 = Sequence(LerpHprInterval(self.node,hpr=hpr1, duration = 0.05), LerpHprInterval(self.node,hpr=hpr2, duration = 0.05))
+            self.damage_anim.append(s1)
+            self.damage_anim.append(s2)
+            
+            self.damage_anim.start()
+            self.parent.parent.gameui.minusHealth(damage)
+            print "Damaged me!"
+        # player got damage and died
+        else:
+            s1 = Sequence(Func(self.scratches.reparentTo, aspect2d), 
+                         LerpColorInterval(self.scratches, duration=1, color=Vec4(1,1,1,0)), 
+                         Func(self.scratches.detachNode),
+                         Func(self.scratches.setColor, Vec4(1,1,1,1)))
+            
+            # set up die interval
+            startpos = self.node.getPos()
+            pos = startpos+Vec3(0, 0, -3)
+            starthpr = self.node.getHpr()
+            hpr = starthpr+Vec3(0, 0, 15)
+            s2 = Sequence(LerpPosInterval(self.node, pos=pos, duration=0.5))
+            s3 = Sequence(LerpHprInterval(self.node, hpr=hpr, duration=0.5))
+            self.damage_anim.append(s1)
+            self.damage_anim.append(s2)
+            self.damage_anim.append(s3)
+            
+            self.damage_anim.start()
+            self.parent.parent.gameui.minusHealth(damage)
+            
+            # shut down player
+            self.clearKeyEvents()
+            taskMgr.remove('UpdatePlayerTask')
+            print "Killed me!"
     
     def setKeys(self, key, value):
         self.keys[key] = value    
