@@ -194,8 +194,8 @@ class Monster():
         
         elif self.orders == ORDERS_IDLE:
             
-            #10 percent chance to go on patrol
-            if percent( 1 ):
+            #percent chance to go on patrol
+            if percent( 10 ):
                 self.orders = ORDERS_PATROL
                 return task.again
                       
@@ -204,7 +204,7 @@ class Monster():
         
         elif self.orders == ORDERS_PATROL:
             
-            #10 percent chance to get idle
+            #percent chance to get idle
             if percent( 1 ):
                 self.orders = ORDERS_IDLE
                 return task.again
