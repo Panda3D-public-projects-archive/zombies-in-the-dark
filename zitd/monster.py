@@ -124,7 +124,8 @@ class Monster():
         taskMgr.doMethodLater(1, self.behaviourTask, 'behtask')
         taskMgr.doMethodLater(1, self.debugMoveTask, 'DebugMoveMonsterTask')
 
-
+    def getLOS(self):
+        return self.parent.collision_manager.checkMonsterPlayerLos(self)
 
     def moveSequence(self):
         move = Sequence()
