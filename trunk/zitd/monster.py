@@ -247,7 +247,7 @@ class Monster():
         if self.action == ACTION_CHASE:
             look_pos = Point3(self.player_last_seen_abs.getX(), self.player_last_seen_abs.getY(), self.zpos)
             self.node.lookAt( look_pos )
-            self.node.setPos(self.node, 0, CHASE_SPEED*globalClock.getDt(), 0)
+            self.node.setFluidPos(self.node, 0, CHASE_SPEED*globalClock.getDt(), 0)
                         
             if self.distanceToPlayer() <= MELEE_RANGE and self.angleToPlayerAbs() <= 45:
                 if time.time() - self.last_melee >= MELEE_TIME:
@@ -256,7 +256,7 @@ class Monster():
         
         elif self.action == ACTION_MOVE:
             self.old_pos = self.node.getPos()
-            self.node.setPos(self.node, 0, NORMAL_SPEED*globalClock.getDt(), 0)
+            self.node.setFluidPos(self.node, 0, NORMAL_SPEED*globalClock.getDt(), 0)
 
  
         elif self.action == ACTION_IDLE:
@@ -293,7 +293,7 @@ class Monster():
                     
             #if we have a waypoint move forward towards it, and check if we arrived at it
             else:
-                self.node.setPos(self.node, 0, NORMAL_SPEED*globalClock.getDt(), 0)
+                self.node.setFluidPos(self.node, 0, NORMAL_SPEED*globalClock.getDt(), 0)
                 my_pos = self.node.getPos() 
                 
                 #if we are close enough to the waypoint, delete it so we know we need a new one

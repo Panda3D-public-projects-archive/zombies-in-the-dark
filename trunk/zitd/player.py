@@ -131,6 +131,7 @@ class Player(DirectObject):
                          Func(self.scratches.setColor, Vec4(1,1,1,1)))
             
             # set up recoil interval
+            """
             starthpr = self.node.getHpr()
             dh = random.uniform(-10,10)
             dp = random.uniform(-10,10)
@@ -146,6 +147,8 @@ class Player(DirectObject):
             self.damage_anim.append(s2)
             
             self.damage_anim.start()
+            """
+            s1.start()
             self.parent.parent.gameui.minusHealth(damage)
             print "Damaged me!"
         # player got damage and died
