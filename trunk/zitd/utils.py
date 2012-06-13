@@ -41,3 +41,8 @@ def percent( num ):
 def d( num ):
     return random.randint(1,num)
 
+def getTile( pos ):
+    return ( int(pos[0]/10), int(pos[1]/10) )
+    
+    
+    

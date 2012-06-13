@@ -9,6 +9,10 @@ from utils import *
 from bullet import Bullet
 import random
 from direct.interval.IntervalGlobal import *
+import time
+
+GUNSHOT_TIMEOUT = 2 #sec
+
 
 class Player(DirectObject):
     def __init__(self, parent, pos):
@@ -30,6 +34,7 @@ class Player(DirectObject):
         self.bullet_objects = []
         self.sprint = False
         self.moving = False
+        self.gunshot_at = None
         
         props = WindowProperties()
         props.setCursorHidden(True) 
@@ -116,6 +121,9 @@ class Player(DirectObject):
             self.bullet_objects.append(Bullet(self, self.node.getHpr()))
             self.gunRecoil()
             self.shoot_sound.play()
+            
+            #remeber gunshot
+            self.gunshot_at = ( getTile( self.node.getPos() ), time.time() )
         else:
             self.gun_click_sound.play()
             None
@@ -197,6 +205,12 @@ class Player(DirectObject):
     def updatePlayer(self, task):
         if self.can_move == False:
             return task.cont
+        
+        #monsters only think once per second so we need to keep gunshots remembered for at least 2 seconds
+        if self.gunshot_at:
+            if time.time() - self.gunshot_at[1] > GUNSHOT_TIMEOUT:
+                self.gunshot_at = None
+            
         
         if self.parent.type == 'FPS':
             md = base.win.getPointer(0)
