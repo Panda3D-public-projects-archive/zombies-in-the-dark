@@ -17,14 +17,16 @@ from utils import *
 ACTION_IDLE = 0
 ACTION_CHASE = 2
 ACTION_FOLLOW_PATH = 3
-
+ACTION_MOVE = 4
 
 ORDERS_PATROL = 1
 ORDERS_IDLE = 0
+ORDERS_HERDING = 2
 
 
 MELEE_RANGE = 10
 MELEE_TIME = 1.5 #seconds
+
 
 SENSING_RANGE = 12
 HEARING_RANGE = 20
@@ -37,6 +39,7 @@ CHASE_SPEED = NORMAL_SPEED * 1.5
 
 IDLE_TIME = 3 #seconds
 IDLE_ROTATE_SPEED = 0.4
+
 
 WAYPOINT_TIMER = 5 #sec
 
@@ -198,13 +201,30 @@ class Monster():
                 self.player_last_seen_abs = p_pos_abs
                 return True
             
+            print "--------", "flash:",self.parent.player.flashlight, "los:",self.getLOS()
+            
             #if player has a flashlight lit, and we can see him go after him
             if self.parent.player.flashlight and self.getLOS():
                 self.player_last_seen_abs = p_pos_abs
                 return True
                 
-
-
+        #---------------------SEE MY OWN SHADOW---------------------------
+        #if player is behind us and has a lit up flashlight and we have LOS to him
+        if self.angleToPlayerAbs() > 135 and self.angleToPlayerAbs() < 225:
+            print "uso1", "flash:",self.parent.player.flashlight, "los:",self.getLOS()
+            
+            if self.parent.player.flashlight and self.getLOS():
+            
+                print "uso2"
+                #if he is looking at us
+                my_pos_rel = self.node.getPos( self.parent.player.node )
+                forward = Vec2( 0, 1 )
+                if math.fabs( forward.signedAngleDeg( Vec2( my_pos_rel[0], my_pos_rel[1] ) ) ) <= 30:
+                    #go after my own shadow
+                    self.orders = ORDERS_HERDING
+                    self.node.setH( self.parent.player.node.getH() )
+                    print "herding"
+                
                 
         return False        
 
@@ -259,6 +279,8 @@ class Monster():
             
             print "novi path:", self.path
 
+        elif self.orders == ORDERS_HERDING:
+            self.action = ACTION_MOVE
              
         return task.again
     
@@ -267,7 +289,8 @@ class Monster():
         if self.pause:
             return task.cont
 
-
+        #print "orders:", self.orders
+        
         if self.action == ACTION_CHASE:
             look_pos = Point3(self.player_last_seen_abs.getX(), self.player_last_seen_abs.getY(), self.zpos)
             self.node.lookAt( look_pos )
@@ -288,7 +311,7 @@ class Monster():
             self.rotateBy( self.idle_value * IDLE_ROTATE_SPEED )
 
 
-        if self.action == ACTION_FOLLOW_PATH:
+        elif self.action == ACTION_FOLLOW_PATH:
             #if we dont have a waypoint, calculate one
             if not self.current_waypoint:
                 try:
@@ -303,7 +326,7 @@ class Monster():
                     #print "waypoint:", self.current_waypoint 
                     self.node.lookAt( self.current_waypoint[0] )
                     
-                except IndexError:
+                except (IndexError, TypeError):
                     #we have reached the end of path
                     self.orders = ORDERS_IDLE
                     self.current_waypoint = None
@@ -319,6 +342,9 @@ class Monster():
                     self.current_waypoint = None 
 
 
+        elif self.action == ACTION_MOVE:
+            self.node.setFluidPos(self.node, 0, NORMAL_SPEED*globalClock.getDt(), 0)            
+ 
  
         return task.cont
 
