@@ -299,7 +299,7 @@ class Monster():
                     #calculate waypoint
                     varx= 5 - (d(4) + d(4))
                     vary= 5 - (d(4) + d(4))
-                    self.current_waypoint = (Point3( tile[0] * 10 + varx, tile[1] * 10 + vary, self.zpos ), time.time() )
+                    self.current_waypoint = (Point3( tile[0] * TILE_SIZE + varx, tile[1] * TILE_SIZE + vary, self.zpos ), time.time() )
                     #print "waypoint:", self.current_waypoint 
                     self.node.lookAt( self.current_waypoint[0] )
                     
