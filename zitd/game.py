@@ -15,7 +15,8 @@ class Game(DirectObject):
         base.win.setClearColor(VBase4(0, 0, 0, 0))
         self.parent = parent
         # GAMETYPE
-        self.type = 'FPS' # 'FPS' or 'DEBUG'
+        self.type = 'DEBUG' # 'FPS' or 'DEBUG'
+        #self.type = 'FPS' # 'FPS' or 'DEBUG'
         
         # Creating level geometry
         self.level = Level(self)
@@ -46,6 +47,8 @@ class Game(DirectObject):
         
         # Instance one monster (needs to be done after setting up collision manager
         Monster(self, 'nos', (9,14))
+        Monster(self, 'nos', (7,10))
+        Monster(self, 'nos', (12,3))
         
         # Instance class for debug output
         self.debug = DebugOptions(self)

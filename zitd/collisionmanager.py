@@ -35,7 +35,7 @@ class CollisionManager(DirectObject):
         base.cTrav = self.traverser
         
         # For debug purposes show collisions
-        #base.cTrav.showCollisions(render)
+        base.cTrav.showCollisions(render)
         
         self.accept('BulletCollisionNode-into-Wall', self.handleBulletWallCollision)
         self.accept('BulletCollisionNode-into-MonsterHeadCollisionNode', self.handleBulletMonsterHeadCollision)
@@ -67,6 +67,8 @@ class CollisionManager(DirectObject):
         monster.cn_head.show()  
         monster.cn_body.show()   
         self.traverser.addCollider(monster.cn_body, self.coll_event)   
+        #self.pusher.addCollider(monster.cn_body, monster.node)
+        #self.traverser.addCollider(monster.cn_body, self.pusher)
 
     def handleBulletWallCollision(self, entry):
         bullet_cn = entry.getFromNodePath()
@@ -113,4 +115,19 @@ class CollisionManager(DirectObject):
         print monster.hp
         
     def handleMonsterWallCollision(self, entry):
-        print entry
+        #print dir( entry )
+        #print entry
+        monster_cn = entry.getFromNodePath()
+        monster = monster_cn.getPythonTag('node')        
+        #print monster.hp
+        
+        
+        #print "point",entry.getInteriorPoint( monster_cn )
+        #print "pos",entry.getContactPos( monster_cn )
+        #print "pos",entry.getContactPos( render )
+        #print "normal",entry.getContactNormal( monster_cn )
+        #print "surface normal",entry.getSurfaceNormal( monster_cn )
+        
+        monster.hitWall( entry.getInteriorPoint( monster_cn ) )
+        
+        
