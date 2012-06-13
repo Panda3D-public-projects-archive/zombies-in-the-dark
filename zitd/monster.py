@@ -143,6 +143,10 @@ class Monster():
     def sensePlayer(self):
         """Return True if player sensed, and his last known coordinates are stored in self.player_last_seen_abs"""
 
+        # if the player is dead, do not sense him
+        if self.parent.player.health <= 0:
+            return False
+
         p_pos_abs = self.parent.player.node.getPos()
         my_pos_abs = self.node.getPos()
 
@@ -239,7 +243,6 @@ class Monster():
                 if time.time() - self.last_melee >= MELEE_TIME:
                     self.parent.player.getDamage()
                     self.last_melee = time.time()
-
         
         elif self.action == ACTION_MOVE:
             self.old_pos = self.node.getPos()

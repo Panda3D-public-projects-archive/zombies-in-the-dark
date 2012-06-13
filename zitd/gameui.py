@@ -88,26 +88,26 @@ class GameUI():
         
         self.doc.Show()
         
-    def minusHealth(self):
-        self.parent.game.player.health -= 1
+    def minusHealth(self, dh=1):
+        self.parent.game.player.health -= dh
         if self.parent.game.player.health < 0:
             self.parent.game.player.health = 0
         self.refreshHealth()
     
-    def plusHealth(self):
-        self.parent.game.player.health += 1
+    def plusHealth(self, dh=1):
+        self.parent.game.player.health += dh
         if self.parent.game.player.health > self.parent.game.player.max_health:
             self.parent.game.player.health = self.parent.game.player.max_health
         self.refreshHealth()
         
-    def minusBullets(self):
-        self.parent.game.player.bullets -= 1
+    def minusBullets(self, db=1):
+        self.parent.game.player.bullets -= db
         if self.parent.game.player.bullets < 0:
             self.parent.game.player.bullets = 0
         self.refreshBullets()
     
-    def plusBullets(self):
-        self.parent.game.player.bullets += 1
+    def plusBullets(self, db=1):
+        self.parent.game.player.bullets += db
         if self.parent.game.player.bullets > self.parent.game.player.max_bullets:
             self.parent.game.player.bullets = self.parent.game.player.max_bullets
         self.refreshBullets()
