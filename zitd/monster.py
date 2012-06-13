@@ -48,7 +48,6 @@ class Monster():
         self.parent = parent
         self.hp = 100
         self.speed = 1
-        self.pos = pos
         self.can_move = True
         
         if type == 'baby':
@@ -162,10 +161,15 @@ class Monster():
         
         #if player is within HEARING_RANGE we know he is there
         effective_hearing_range = HEARING_RANGE
-        if self.parent.player.sprint:
-            effective_hearing_range *= 2
-        if not self.parent.player.moving:
-            effective_hearing_range = 0
+        
+        if self.parent.player.gunshot_at:
+            effective_hearing_range *= 3
+        else:
+            if self.parent.player.sprint:
+                effective_hearing_range *= 2
+            if not self.parent.player.moving:
+                effective_hearing_range = 0
+                
         if self.distanceToPlayer() < effective_hearing_range:
             print "I HEAR U!"
             #if we can see go chase him
@@ -175,8 +179,9 @@ class Monster():
                 
             #we cannot see him, build new path to that tile
             else:
-                dest = ( int(p_pos_abs[0]/10), int(p_pos_abs[1]/10) )
-                path = pathFind(self.parent.level, self.pos, dest)
+                dest = getTile( p_pos_abs )
+                path = pathFind(self.parent.level, getTile( self.node.getPos()), dest)
+                print "novi path:", path
                 if path:
                     self.path = path 
                     self.orders = ORDERS_PATROL
@@ -184,11 +189,14 @@ class Monster():
                     return False
                 
 
+
         #if player is in front of us
         if self.angleToPlayerAbs() <= 45:
-            if self.getLOS():
+            if self.distanceToPlayer() <= VIEW_RANGE and self.getLOS():
                 self.player_last_seen_abs = p_pos_abs
                 return True
+
+
                 
         return False        
 
@@ -210,7 +218,6 @@ class Monster():
 
 
     def behaviourTask(self, task):
-        print self.path
         #top priority, if we sense a player, go after him!
         if self.sensePlayer():
             print "CHASE!!!!"
@@ -238,10 +245,10 @@ class Monster():
 
             #build a new path for patrol                
             self.action = ACTION_FOLLOW_PATH
-            dest = self.pos
-            while dest == self.pos:
-                dest = self.patrol_points[random.randint(0,4)]
-            self.path = pathFind(self.parent.level, self.pos, dest)
+            dest = self.patrol_points[random.randint(0,4)]
+            print "dest",dest
+            self.path = pathFind(self.parent.level, getTile(self.node.getPos()), dest)
+            print "novi path:", self.path
 
              
         return task.again
@@ -251,12 +258,13 @@ class Monster():
         if self.pause:
             return task.cont
 
+
         if self.action == ACTION_CHASE:
             look_pos = Point3(self.player_last_seen_abs.getX(), self.player_last_seen_abs.getY(), self.zpos)
             self.node.lookAt( look_pos )
             self.node.setFluidPos(self.node, 0, CHASE_SPEED*globalClock.getDt(), 0)
                         
-            if self.distanceToPlayer() <= MELEE_RANGE and self.angleToPlayerAbs() <= 45:
+            if self.distanceToPlayer() <= MELEE_RANGE and self.angleToPlayerAbs() <= 45 and self.getLOS():
                 if time.time() - self.last_melee >= MELEE_TIME:
                     self.parent.player.getDamage()
                     self.last_melee = time.time()
@@ -280,8 +288,8 @@ class Monster():
                     self.path = self.path[1:]
                     
                     #calculate waypoint
-                    varx= 6 - (d(5) + d(5))
-                    vary= 6 - (d(5) + d(5))
+                    varx= 5 - (d(4) + d(4))
+                    vary= 5 - (d(4) + d(4))
                     self.current_waypoint = (Point3( tile[0] * 10 + varx, tile[1] * 10 + vary, self.zpos ), time.time() )
                     #print "waypoint:", self.current_waypoint 
                     self.node.lookAt( self.current_waypoint[0] )
@@ -380,7 +388,7 @@ class Monster():
         print("Instance of Custom Class Alpha Removed")
     """        
     
-    
+    """
     def moveSequence(self):
         move = Sequence()
         start = self.node.getPos()
@@ -399,6 +407,6 @@ class Monster():
 
     def setAction(self, action):
         self.action = action
-
+    """
 
     
