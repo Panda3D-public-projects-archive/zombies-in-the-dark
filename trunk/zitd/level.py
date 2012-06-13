@@ -15,6 +15,8 @@ class Level():
         self.x_size = pnmi.getXSize()
         self.y_size = pnmi.getYSize()
         
+        self.tex_ext = '.png'
+        
         # Load textures
         self.ts_normal = TextureStage('wall_normal')
         self.ts_normal.setMode(TextureStage.MNormal)
@@ -23,28 +25,28 @@ class Level():
         self.ts_glow = TextureStage('wall_glow')
         self.ts_glow.setMode(TextureStage.MGlow)              
         
-        self.texa = loader.loadTexture('models/pk02_wall02a_C.tga')
-        self.texa_normal = loader.loadTexture('models/pk02_wall02a_N.tga')
-        self.texa_gloss = loader.loadTexture('models/pk02_wall02a_S1.tga')
-        self.texa_glow = loader.loadTexture('models/pk02_wall02a_I1.tga')
+        self.texa = loader.loadTexture('models/pk02_wall02a_C'+self.tex_ext)
+        self.texa_normal = loader.loadTexture('models/pk02_wall02a_N'+self.tex_ext)
+        self.texa_gloss = loader.loadTexture('models/pk02_wall02a_S1'+self.tex_ext)
+        self.texa_glow = loader.loadTexture('models/pk02_wall02a_I1'+self.tex_ext)
         
-        self.texb = loader.loadTexture('models/pk02_wall02b_C.tga')
-        self.texb_normal = loader.loadTexture('models/pk02_wall02b_N.tga')
-        self.texb_gloss = loader.loadTexture('models/pk02_wall02b_S1.tga')
-        self.texb_glow = loader.loadTexture('models/pk02_wall02b_I1.tga')   
+        self.texb = loader.loadTexture('models/pk02_wall02b_C'+self.tex_ext)
+        self.texb_normal = loader.loadTexture('models/pk02_wall02b_N'+self.tex_ext)
+        self.texb_gloss = loader.loadTexture('models/pk02_wall02b_S1'+self.tex_ext)
+        self.texb_glow = loader.loadTexture('models/pk02_wall02b_I1'+self.tex_ext)   
         
-        self.texc = loader.loadTexture('models/pk02_wall02c_C.tga')
-        self.texc_normal = loader.loadTexture('models/pk02_wall02c_N.tga')
-        self.texc_gloss = loader.loadTexture('models/pk02_wall02c_S1.tga')
-        self.texc_glow = loader.loadTexture('models/pk02_wall02c_I1.tga') 
+        self.texc = loader.loadTexture('models/pk02_wall02c_C'+self.tex_ext)
+        self.texc_normal = loader.loadTexture('models/pk02_wall02c_N'+self.tex_ext)
+        self.texc_gloss = loader.loadTexture('models/pk02_wall02c_S1'+self.tex_ext)
+        self.texc_glow = loader.loadTexture('models/pk02_wall02c_I1'+self.tex_ext) 
         
-        self.tex_ceil = loader.loadTexture('models/pk02_ceiling03_C.tga')
-        self.tex_ceil_normal = loader.loadTexture('models/pk02_ceiling03_N.tga')
-        self.tex_ceil_gloss = loader.loadTexture('models/pk02_ceiling03_S1.tga')        
+        self.tex_ceil = loader.loadTexture('models/pk02_ceiling03_C'+self.tex_ext)
+        self.tex_ceil_normal = loader.loadTexture('models/pk02_ceiling03_N'+self.tex_ext)
+        self.tex_ceil_gloss = loader.loadTexture('models/pk02_ceiling03_S1'+self.tex_ext)        
         
-        self.tex_floor = loader.loadTexture('models/pk02_floor01_C.tga')
-        self.tex_floor_normal = loader.loadTexture('models/pk02_floor01_N.tga')
-        self.tex_floor_gloss = loader.loadTexture('models/pk02_floor01_S1.tga')            
+        self.tex_floor = loader.loadTexture('models/pk02_floor01_C'+self.tex_ext)
+        self.tex_floor_normal = loader.loadTexture('models/pk02_floor01_N'+self.tex_ext)
+        self.tex_floor_gloss = loader.loadTexture('models/pk02_floor01_S1'+self.tex_ext)            
         
         self.texa.setMagfilter(Texture.FTLinearMipmapLinear)
         self.texa.setMinfilter(Texture.FTLinearMipmapLinear)
