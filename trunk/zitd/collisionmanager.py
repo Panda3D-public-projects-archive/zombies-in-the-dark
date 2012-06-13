@@ -13,7 +13,7 @@ class CollisionManager(DirectObject):
         
         # Create player collision objects
         self.player_cn = self.parent.player.node.attachNewNode(CollisionNode('PlayerCollisionNode'))
-        self.player_cn.node().addSolid(CollisionSphere(0, 0, 0, 1.8))
+        self.player_cn.node().addSolid(CollisionSphere(0, 0, 0, 2))
         self.player_cn.node().setFromCollideMask(COLL_PLAYER_WALL)
         self.player_cn.node().setIntoCollideMask(COLL_MONSTER_PLAYER_LOS)
         #TODO: maknuti        
@@ -24,6 +24,7 @@ class CollisionManager(DirectObject):
         
         # FluidPusher will be used to handle player-wall collisions and automatically push player in the right direction
         self.pusher = CollisionHandlerFluidPusher()
+        self.pusher.addInPattern('%fn-into-%in')
         self.pusher.addCollider(self.player_cn, self.parent.player.node)
         
         # CollisionHandlerEvent will be used to handle bullet collisions
@@ -50,7 +51,7 @@ class CollisionManager(DirectObject):
         self.accept('BulletCollisionNode-into-Wall', self.handleBulletWallCollision)
         self.accept('BulletCollisionNode-into-MonsterHeadCollisionNode', self.handleBulletMonsterHeadCollision)
         self.accept('BulletCollisionNode-into-MonsterBodyCollisionNode', self.handleBulletMonsterBodyCollision)
-        self.accept('MonsterBodyCollisionNode-into-Wall', self.handleMonsterWallCollision)
+        self.accept('MonsterPusherCollisionNode-into-Wall', self.handleMonsterWallCollision)
 
     def createBulletCollision(self, bullet):
         bullet.cn = bullet.node.attachNewNode(CollisionNode('BulletCollisionNode'))
@@ -161,6 +162,7 @@ class CollisionManager(DirectObject):
     def handleMonsterWallCollision(self, entry):
         #print dir( entry )
         #print entry
+        print entry
         monster_cn = entry.getFromNodePath()
         monster = monster_cn.getPythonTag('node')        
         #print monster.hp
@@ -172,6 +174,6 @@ class CollisionManager(DirectObject):
         #print "normal",entry.getContactNormal( monster_cn )
         #print "surface normal",entry.getSurfaceNormal( monster_cn )
         
-        monster.hitWall( entry.getInteriorPoint( monster_cn ) )
+        #monster.hitWall( entry.getInteriorPoint( monster_cn ) )
         
         
