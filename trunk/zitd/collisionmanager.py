@@ -41,8 +41,7 @@ class CollisionManager(DirectObject):
         base.cTrav = self.traverser
         
         # Set up another traverser for monster-player LoS checks
-        self.los_traverser = CollisionTraverser()
-        self.los_traverser.setRespectPrevTransform(True) 
+        self.los_traverser = CollisionTraverser() 
         
         # For debug purposes show collisions
         #base.cTrav.showCollisions(render)
@@ -77,6 +76,7 @@ class CollisionManager(DirectObject):
         monster.cn_pusher = monster.node.attachNewNode(CollisionNode('MonsterPusherCollisionNode'))
         monster.cn_pusher.node().addSolid(CollisionSphere(0, 0, 0, 1.2))
         monster.cn_pusher.node().setFromCollideMask(COLL_MONSTER_WALL)
+        monster.cn_pusher.node().setIntoCollideMask(BitMask32.allOff())
         monster.cn_pusher.node().setPythonTag('node', monster)
 
         #TODO: maknuti        
@@ -89,7 +89,6 @@ class CollisionManager(DirectObject):
         monster.cn_ray.node().addSolid(monster.ray) 
         monster.cn_ray.node().setFromCollideMask(COLL_MONSTER_PLAYER_LOS)
         monster.cn_ray.node().setIntoCollideMask(BitMask32.allOff())
-        monster.cn_ray.show()
         self.los_traverser.addCollider(monster.cn_ray, self.coll_queue)
         
         # Pusher for monster-wall detection
