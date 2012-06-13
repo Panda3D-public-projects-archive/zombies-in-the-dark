@@ -43,6 +43,8 @@ IDLE_ROTATE_SPEED = 0.4
 
 WAYPOINT_TIMER = 5 #sec
 
+HERDING_TIMEOUT = 2 #sec
+
 
 
 class Monster():
@@ -131,6 +133,7 @@ class Monster():
         self.current_waypoint = None
 
         #self.wait_until = None
+        self.herding_timer = None
 
         self.path = None
 
@@ -152,6 +155,7 @@ class Monster():
         #get player's position
         p_pos_abs = self.parent.player.node.getPos()
         my_pos_abs = self.node.getPos()
+
 
         #--------------------------------SENSE---------------------------------
         #if player is within SENSING_RANGE we know he is there
@@ -195,36 +199,36 @@ class Monster():
         #-------------------------------SEE---------------------------------
         #if player is in front of us
         if self.angleToPlayerAbs() <= 45:
-            
+            print "player in front LOS:", self.getLOS()
             #if he is close enough to see and we can see him
             if self.distanceToPlayer() <= VIEW_RANGE and self.getLOS():
                 self.player_last_seen_abs = p_pos_abs
+                print "vidim!"
                 return True
-            
-            print "--------", "flash:",self.parent.player.flashlight, "los:",self.getLOS()
             
             #if player has a flashlight lit, and we can see him go after him
             if self.parent.player.flashlight and self.getLOS():
                 self.player_last_seen_abs = p_pos_abs
+                print "vidim flashlight"
                 return True
+                
                 
         #---------------------SEE MY OWN SHADOW---------------------------
         #if player is behind us and has a lit up flashlight and we have LOS to him
         if self.angleToPlayerAbs() > 135 and self.angleToPlayerAbs() < 225:
-            print "uso1", "flash:",self.parent.player.flashlight, "los:",self.getLOS()
+            print "player in back, LOS:", elf.getLOS()
             
             if self.parent.player.flashlight and self.getLOS():
             
-                print "uso2"
                 #if he is looking at us
                 my_pos_rel = self.node.getPos( self.parent.player.node )
                 forward = Vec2( 0, 1 )
                 if math.fabs( forward.signedAngleDeg( Vec2( my_pos_rel[0], my_pos_rel[1] ) ) ) <= 30:
                     #go after my own shadow
+                    print "herding"
                     self.orders = ORDERS_HERDING
                     self.node.setH( self.parent.player.node.getH() )
-                    print "herding"
-                
+                    self.herding_timer = time.time()
                 
         return False        
 
@@ -247,6 +251,7 @@ class Monster():
 
     def behaviourTask(self, task):
         #top priority, if we sense a player, go after him!
+        
         if self.sensePlayer():
             print "CHASE!!!!"
             self.action = ACTION_CHASE
@@ -276,11 +281,12 @@ class Monster():
             self.path = pathFind(self.parent.level, getTile(self.node.getPos()), dest)
             self.action = ACTION_FOLLOW_PATH
                 
-            
-            print "novi path:", self.path
 
         elif self.orders == ORDERS_HERDING:
             self.action = ACTION_MOVE
+            if time.time() - self.herding_timer > HERDING_TIMEOUT:
+                self.orders = ORDERS_IDLE
+                
              
         return task.again
     
