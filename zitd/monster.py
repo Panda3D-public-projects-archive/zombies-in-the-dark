@@ -15,17 +15,21 @@ from utils import *
 
 
 ACTION_IDLE = 0
-ACTION_MOVE = 1
 ACTION_CHASE = 2
 ACTION_FOLLOW_PATH = 3
 
+
 ORDERS_PATROL = 1
 ORDERS_IDLE = 0
+
 
 MELEE_RANGE = 10
 MELEE_TIME = 1.5 #seconds
 
 SENSING_RANGE = 12
+HEARING_RANGE = 20
+VIEW_RANGE = 30
+
 
 NORMAL_SPEED = 2
 CHASE_SPEED = NORMAL_SPEED * 1.5
@@ -33,6 +37,8 @@ CHASE_SPEED = NORMAL_SPEED * 1.5
 
 IDLE_TIME = 3 #seconds
 IDLE_ROTATE_SPEED = 0.4
+
+WAYPOINT_TIMER = 5 #sec
 
 
 
@@ -92,7 +98,7 @@ class Monster():
         self.audio3d.attachSoundToObject(self.moan2, self.node)
         self.audio3d.attachSoundToObject(self.shot_head, self.node)
         self.audio3d.attachSoundToObject(self.shot_body, self.node)
-        delay = Wait(15)
+        delay = Wait(30)
         self.moan_sequence = Sequence(SoundInterval(self.moan1), delay, SoundInterval(self.moan2), delay).loop()
         self.moan_sequence = None
         self.move_sequence = None
@@ -102,13 +108,13 @@ class Monster():
 
         #--------------------------brain-------------------------
         self.node.setH( 160 )
-        self.old_pos = self.node.getPos()
+        self.old_pos = None
         
         self.pause = False
 
         self.action = ACTION_IDLE
 
-        if percent(50):
+        if percent(1):
             self.orders = ORDERS_PATROL
         else:
             self.orders = ORDERS_IDLE
@@ -122,62 +128,69 @@ class Monster():
 
         self.current_waypoint = None
 
+        #self.wait_until = None
+
+        self.path = None
 
         taskMgr.doMethodLater(1, self.behaviourTask, 'behtask'+str(self.id) )
         taskMgr.doMethodLater(1, self.debugMoveTask, 'DebugMoveMonsterTask'+str(self.id))
 
+
     def getLOS(self):
         return self.parent.collision_manager.checkMonsterPlayerLos(self)
-
-    def moveSequence(self):
-        move = Sequence()
-        start = self.node.getPos()
-        for p in self.path:
-            dest = Point3(p[0]*TILE_SIZE, p[1]*TILE_SIZE, 5)
-            i = Sequence(self.node.posInterval(self.speed, dest, start), Func(self.updatePosition, p))
-            start = dest
-            move.append(i)
-        move.append(Func(self.setAction, 'stand'))
-        return move
-        
-        
-    def updatePosition(self, dest):
-        self.pos = dest
-
-
-    def setAction(self, action):
-        self.action = action
 
 
     def sensePlayer(self):
         """Return True if player sensed, and his last known coordinates are stored in self.player_last_seen_abs"""
-        print self.node.getPos()[0]
+        
         # if the player is dead, do not sense him
         if self.parent.player.health <= 0:
             return False
 
+        #get player's position
         p_pos_abs = self.parent.player.node.getPos()
         my_pos_abs = self.node.getPos()
 
         
         #if player is within SENSING_RANGE we know he is there
         if self.distanceToPlayer() < SENSING_RANGE:
-            print "TOO CLOSE LOOSER!"
+            #print "TOO CLOSE LOOSER!"
             self.player_last_seen_abs = p_pos_abs
-            
-            #print "tile:", ( p_pos_abs[0]/TILE_SIZE, p_pos_abs[1]/TILE_SIZE ), "  pos:", p_pos_abs
-            
             return True
+
+
         
-        
-        
+        #if player is within HEARING_RANGE we know he is there
+        effective_hearing_range = HEARING_RANGE
+        if self.parent.player.sprint:
+            effective_hearing_range *= 2
+        if not self.parent.player.moving:
+            effective_hearing_range = 0
+        if self.distanceToPlayer() < effective_hearing_range:
+            print "I HEAR U!"
+            #if we can see go chase him
+            if self.getLOS():
+                self.player_last_seen_abs = p_pos_abs
+                return True
+                
+            #we cannot see him, build new path to that tile
+            else:
+                dest = ( int(p_pos_abs[0]/10), int(p_pos_abs[1]/10) )
+                path = pathFind(self.parent.level, self.pos, dest)
+                if path:
+                    self.path = path 
+                    self.orders = ORDERS_PATROL
+                    self.action = ACTION_FOLLOW_PATH
+                    return False
+                
+
         #if player is in front of us
         if self.angleToPlayerAbs() <= 45:
-            #print "napred mi je"
-            #TODO: if LOS return True
-            pass
-        
-        pass
+            if self.getLOS():
+                self.player_last_seen_abs = p_pos_abs
+                return True
+                
+        return False        
 
 
     def distanceToPlayer(self):
@@ -197,7 +210,7 @@ class Monster():
 
 
     def behaviourTask(self, task):
-        
+        print self.path
         #top priority, if we sense a player, go after him!
         if self.sensePlayer():
             print "CHASE!!!!"
@@ -206,17 +219,14 @@ class Monster():
 
         
         elif self.orders == ORDERS_IDLE:
-            
             #percent chance to go on patrol
             if percent( 10 ):
                 self.orders = ORDERS_PATROL
                 return task.again
-                      
             self.action = ACTION_IDLE
             
         
         elif self.orders == ORDERS_PATROL:
-            
             #percent chance to get idle
             if percent( 1 ):
                 self.orders = ORDERS_IDLE
@@ -226,15 +236,12 @@ class Monster():
             if self.action == ACTION_FOLLOW_PATH:
                 return task.again
 
-
             #build a new path for patrol                
             self.action = ACTION_FOLLOW_PATH
-            self.dest = self.pos
-            while self.dest == self.pos:
-                self.dest = self.patrol_points[random.randint(0,4)]
-            self.path = pathFind(self.parent.level, self.pos, self.dest)
-            #self.move_sequence = self.moveSequence()
-            #self.move_sequence.start()
+            dest = self.pos
+            while dest == self.pos:
+                dest = self.patrol_points[random.randint(0,4)]
+            self.path = pathFind(self.parent.level, self.pos, dest)
 
              
         return task.again
@@ -243,7 +250,7 @@ class Monster():
     def debugMoveTask(self, task):
         if self.pause:
             return task.cont
-        
+
         if self.action == ACTION_CHASE:
             look_pos = Point3(self.player_last_seen_abs.getX(), self.player_last_seen_abs.getY(), self.zpos)
             self.node.lookAt( look_pos )
@@ -254,24 +261,17 @@ class Monster():
                     self.parent.player.getDamage()
                     self.last_melee = time.time()
         
-        elif self.action == ACTION_MOVE:
-            self.old_pos = self.node.getPos()
-            self.node.setFluidPos(self.node, 0, NORMAL_SPEED*globalClock.getDt(), 0)
-
  
         elif self.action == ACTION_IDLE:
             if time.time() - self.idle_timer > IDLE_TIME:
-                
                 #we are standing still and rotating, see on whic side we will rotate now
                 self.idle_timer = time.time()
                 if percent(20):
                     self.idle_value *= -1
-                    
             self.rotateBy( self.idle_value * IDLE_ROTATE_SPEED )
 
 
         if self.action == ACTION_FOLLOW_PATH:
-            
             #if we dont have a waypoint, calculate one
             if not self.current_waypoint:
                 try:
@@ -282,9 +282,9 @@ class Monster():
                     #calculate waypoint
                     varx= 6 - (d(5) + d(5))
                     vary= 6 - (d(5) + d(5))
-                    self.current_waypoint = Point3( tile[0] * 10 + varx, tile[1] * 10 + vary, self.zpos )
+                    self.current_waypoint = (Point3( tile[0] * 10 + varx, tile[1] * 10 + vary, self.zpos ), time.time() )
                     #print "waypoint:", self.current_waypoint 
-                    self.node.lookAt( self.current_waypoint )
+                    self.node.lookAt( self.current_waypoint[0] )
                     
                 except IndexError:
                     #we have reached the end of path
@@ -296,9 +296,12 @@ class Monster():
                 self.node.setFluidPos(self.node, 0, NORMAL_SPEED*globalClock.getDt(), 0)
                 my_pos = self.node.getPos() 
                 
-                #if we are close enough to the waypoint, delete it so we know we need a new one
-                if math.fabs( my_pos[0] - self.current_waypoint[0] ) < 1 and math.fabs( my_pos[1] - self.current_waypoint[1] ) < 1:
+                #if we are close enough to the waypoint or if we didnt get to waypoint in time, delete it so we know we need a new one
+                if math.fabs( my_pos[0] - self.current_waypoint[0][0] ) < 1 and math.fabs( my_pos[1] - self.current_waypoint[0][1] ) < 2 \
+                        or time.time() - self.current_waypoint[1] > WAYPOINT_TIMER:
                     self.current_waypoint = None 
+
+
  
         return task.cont
 
@@ -306,11 +309,19 @@ class Monster():
     def rotateBy(self, value):
         self.node.setH( (self.node.getH() + value) % 360  )
         
+        
 
-    def hitWall(self, pos):
+    def hitWall(self):
         
+        if self.action == ACTION_CHASE:
+            return
+    
+        print "lupio!"
+        """self.moan1.play()
+        self.rotateBy( 180 )
+        self.node.setFluidPos(self.node, 0, CHASE_SPEED*globalClock.getDt(), 0)            
         #self.action = IDLE
-        
+        """
         #move a step back
         #self.node.setPos(render, self.old_pos)        
         """
@@ -368,3 +379,26 @@ class Monster():
     def __del__(self):
         print("Instance of Custom Class Alpha Removed")
     """        
+    
+    
+    def moveSequence(self):
+        move = Sequence()
+        start = self.node.getPos()
+        for p in self.path:
+            dest = Point3(p[0]*TILE_SIZE, p[1]*TILE_SIZE, 5)
+            i = Sequence(self.node.posInterval(self.speed, dest, start), Func(self.updatePosition, p))
+            start = dest
+            move.append(i)
+        move.append(Func(self.setAction, 'stand'))
+        return move
+        
+        
+    def updatePosition(self, dest):
+        self.pos = dest
+
+
+    def setAction(self, action):
+        self.action = action
+
+
+    
