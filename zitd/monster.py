@@ -37,7 +37,8 @@ IDLE_ROTATE_SPEED = 0.4
 
 
 class Monster():
-    def __init__(self, parent, type, pos):
+    def __init__(self, id, parent, type, pos):
+        self.id = id
         self.parent = parent
         self.hp = 100
         self.speed = 1
@@ -121,8 +122,9 @@ class Monster():
 
         self.current_waypoint = None
 
-        taskMgr.doMethodLater(1, self.behaviourTask, 'behtask')
-        taskMgr.doMethodLater(1, self.debugMoveTask, 'DebugMoveMonsterTask')
+
+        taskMgr.doMethodLater(1, self.behaviourTask, 'behtask'+str(self.id) )
+        taskMgr.doMethodLater(1, self.debugMoveTask, 'DebugMoveMonsterTask'+str(self.id))
 
     def getLOS(self):
         return self.parent.collision_manager.checkMonsterPlayerLos(self)
@@ -149,7 +151,7 @@ class Monster():
 
     def sensePlayer(self):
         """Return True if player sensed, and his last known coordinates are stored in self.player_last_seen_abs"""
-
+        print self.node.getPos()[0]
         # if the player is dead, do not sense him
         if self.parent.player.health <= 0:
             return False
@@ -160,7 +162,7 @@ class Monster():
         
         #if player is within SENSING_RANGE we know he is there
         if self.distanceToPlayer() < SENSING_RANGE:
-            #print "TOO CLOSE LOOSER!"
+            print "TOO CLOSE LOOSER!"
             self.player_last_seen_abs = p_pos_abs
             
             #print "tile:", ( p_pos_abs[0]/TILE_SIZE, p_pos_abs[1]/TILE_SIZE ), "  pos:", p_pos_abs
@@ -354,8 +356,8 @@ class Monster():
         if self.move_sequence != None:
             self.move_sequence.pause()
             self.move_sequence = None    
-        taskMgr.remove('behtask')
-        taskMgr.remove('DebugMoveMonsterTask')
+        taskMgr.remove('behtask'+str(self.id))
+        taskMgr.remove('DebugMoveMonsterTask'+str(self.id))
         #TODO: vratiti kad bude Actor
         #self.node.delete()
         #self.node.cleanup()
