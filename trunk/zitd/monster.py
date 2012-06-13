@@ -57,7 +57,8 @@ class Monster():
                                               'die':'models/baby-die'})
             self.node.setH(180)
             self.node.flattenLight()
-            self.node.setPos(pos[0]*TILE_SIZE,pos[1]*TILE_SIZE,0)
+            self.zpos = 0
+            self.node.setPos(pos[0]*TILE_SIZE,pos[1]*TILE_SIZE,self.zpos)
             self.node.setScale(0.03)
             self.node.setTexture(loader.loadTexture('models/Zomby_D.tga'))
             self.ts_normal = TextureStage('ts_normal')
@@ -68,7 +69,8 @@ class Monster():
             self.node.loop('stand')
         elif type == 'nos':
             self.node = loader.loadModel('models/nos')
-            self.node.setPos(pos[0]*TILE_SIZE,pos[1]*TILE_SIZE,5)
+            self.zpos = 5
+            self.node.setPos(pos[0]*TILE_SIZE,pos[1]*TILE_SIZE,self.zpos)
             self.node.setScale(2)
             self.node.setColor(1,0,0)
             self.node.reparentTo(render)
@@ -272,7 +274,7 @@ class Monster():
                     #calculate waypoint
                     varx= 6 - (d(5) + d(5))
                     vary= 6 - (d(5) + d(5))
-                    self.current_waypoint = Point3( tile[0] * 10 + varx, tile[1] * 10 + vary, 0 )
+                    self.current_waypoint = Point3( tile[0] * 10 + varx, tile[1] * 10 + vary, self.zpos )
                     #print "waypoint:", self.current_waypoint 
                     self.node.lookAt( self.current_waypoint )
                     
