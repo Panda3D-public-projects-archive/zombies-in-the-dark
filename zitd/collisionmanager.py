@@ -74,7 +74,8 @@ class CollisionManager(DirectObject):
         bullet_cn = entry.getFromNodePath()
         bullet = bullet_cn.getPythonTag('node')
         bullet_cn.clearPythonTag('node')
-        self.parent.player.bullet_objects.remove(bullet)
+        if bullet in self.parent.player.bullet_objects:
+            self.parent.player.bullet_objects.remove(bullet)
         bullet.destroy()  
         
         
@@ -82,7 +83,8 @@ class CollisionManager(DirectObject):
         bullet_cn = entry.getFromNodePath()
         bullet = bullet_cn.getPythonTag('node')
         bullet_cn.clearPythonTag('node')
-        self.parent.player.bullet_objects.remove(bullet)
+        if bullet in self.parent.player.bullet_objects:
+            self.parent.player.bullet_objects.remove(bullet)
         bullet.destroy() 
         
         monster_cn = entry.getIntoNodePath()
@@ -100,7 +102,8 @@ class CollisionManager(DirectObject):
         bullet_cn = entry.getFromNodePath()
         bullet = bullet_cn.getPythonTag('node')
         bullet_cn.clearPythonTag('node')
-        self.parent.player.bullet_objects.remove(bullet)
+        if bullet in self.parent.player.bullet_objects:
+            self.parent.player.bullet_objects.remove(bullet)
         bullet.destroy()        
         
         monster_cn = entry.getIntoNodePath()
