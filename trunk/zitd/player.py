@@ -140,6 +140,7 @@ class Player(DirectObject):
         self.damage_anim.append(s2)
         
         self.damage_anim.start()
+        print "demidjo me!"
     
     def setKeys(self, key, value):
         self.keys[key] = value    

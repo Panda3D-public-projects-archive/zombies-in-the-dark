@@ -1,4 +1,6 @@
 from panda3d.core import *
+import random
+
 
 TILE_SIZE = 10.
 ASPECT = 0.8
@@ -27,3 +29,15 @@ def loadImageAsPlane(filepath, yresolution = 600):
     card.setScale(card.getScale()/ yresolution)
     card.flattenLight() # apply scale
     return card 
+
+
+def percent( num ):
+    rnd = random.randint(1,100)
+    if rnd <= num:
+        return 1
+    else:
+        return 0
+
+def d( num ):
+    return random.randint(1,num)
+
