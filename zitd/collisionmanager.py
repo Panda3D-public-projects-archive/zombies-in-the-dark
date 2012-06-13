@@ -64,20 +64,23 @@ class CollisionManager(DirectObject):
         
     def createMonsterCollision(self, monster):
         monster.cn_head = monster.node.attachNewNode(CollisionNode('MonsterHeadCollisionNode'))
-        monster.cn_head.node().addSolid(CollisionSphere(0, 0, 0, 1.5))
+        monster.cn_head.node().addSolid(CollisionSphere(0, 0, 0, 1.2))
         monster.cn_head.node().setIntoCollideMask(COLL_BULLET_WALL_MONSTER)
         monster.cn_head.node().setPythonTag('node', monster)
         monster.cn_body = monster.node.attachNewNode(CollisionNode('MonsterBodyCollisionNode'))
         monster.cn_body.node().addSolid(CollisionSphere(0, 0, 0, 1.5))
         monster.cn_body.node().setIntoCollideMask(COLL_BULLET_WALL_MONSTER)
-        monster.cn_body.node().setFromCollideMask(COLL_MONSTER_WALL)
         monster.cn_body.node().setPythonTag('node', monster)
-        #TODO: bolje podesiti collision sphere kad dodju pravi modeli
-        monster.cn_body.setPos(0,0,-2)
+        monster.cn_body.setPos(0,0,-2)        
+        # For some reason if we position collision node a bit below original node, collision pusher does not work
+        monster.cn_pusher = monster.node.attachNewNode(CollisionNode('MonsterPusherCollisionNode'))
+        monster.cn_pusher.node().addSolid(CollisionSphere(0, 0, 0, 1.2))
+        monster.cn_pusher.node().setFromCollideMask(COLL_MONSTER_WALL)
+        monster.cn_pusher.node().setPythonTag('node', monster)
+
         #TODO: maknuti        
         monster.cn_head.show()  
-        monster.cn_body.show()   
-        self.traverser.addCollider(monster.cn_body, self.coll_event)   
+        monster.cn_body.show() 
         
         # CollisionRay for monster-player LoS detection
         monster.ray = CollisionRay()
@@ -87,6 +90,10 @@ class CollisionManager(DirectObject):
         monster.cn_ray.node().setIntoCollideMask(BitMask32.allOff())
         monster.cn_ray.show()
         self.los_traverser.addCollider(monster.cn_ray, self.coll_queue)
+        
+        # Pusher for monster-wall detection
+        self.pusher.addCollider(monster.cn_pusher, monster.node)
+        self.traverser.addCollider(monster.cn_pusher, self.pusher)
 
     def checkMonsterPlayerLos(self, monster):
         vector = self.player_cn.getPos(monster.cn_ray) - monster.cn_ray.getPos()
@@ -126,6 +133,7 @@ class CollisionManager(DirectObject):
         else:
             monster_cn.clearPythonTag('node')
             monster.cn_body.node().clearPythonTag('node')
+            monster.cn_pusher.node().clearPythonTag('node')
             monster.destroy()
         print monster.hp
         
@@ -146,6 +154,7 @@ class CollisionManager(DirectObject):
         else:
             monster_cn.clearPythonTag('node')
             monster.cn_head.node().clearPythonTag('node')
+            monster.cn_pusher.node().clearPythonTag('node')            
             monster.destroy()
         print monster.hp
         
