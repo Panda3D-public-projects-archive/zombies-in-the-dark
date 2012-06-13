@@ -150,7 +150,7 @@ class Monster():
         p_pos_abs = self.parent.player.node.getPos()
         my_pos_abs = self.node.getPos()
 
-        
+        #--------------------------------SENSE---------------------------------
         #if player is within SENSING_RANGE we know he is there
         if self.distanceToPlayer() < SENSING_RANGE:
             #print "TOO CLOSE LOOSER!"
@@ -158,7 +158,7 @@ class Monster():
             return True
 
 
-        
+        #---------------------------------HEAR----------------------------------
         #if player is within HEARING_RANGE we know he is there
         effective_hearing_range = HEARING_RANGE
         
@@ -189,12 +189,20 @@ class Monster():
                     return False
                 
 
-
+        #-------------------------------SEE---------------------------------
         #if player is in front of us
         if self.angleToPlayerAbs() <= 45:
+            
+            #if he is close enough to see and we can see him
             if self.distanceToPlayer() <= VIEW_RANGE and self.getLOS():
                 self.player_last_seen_abs = p_pos_abs
                 return True
+            
+            #if player has a flashlight lit, and we can see him go after him
+            if self.parent.player.flashlight and self.getLOS():
+                self.player_last_seen_abs = p_pos_abs
+                return True
+                
 
 
                 
@@ -243,11 +251,12 @@ class Monster():
             if self.action == ACTION_FOLLOW_PATH:
                 return task.again
 
-            #build a new path for patrol                
-            self.action = ACTION_FOLLOW_PATH
+            #build a new path for patrol
             dest = self.patrol_points[random.randint(0,4)]
-            print "dest",dest
             self.path = pathFind(self.parent.level, getTile(self.node.getPos()), dest)
+            self.action = ACTION_FOLLOW_PATH
+                
+            
             print "novi path:", self.path
 
              
@@ -324,7 +333,7 @@ class Monster():
         if self.action == ACTION_CHASE:
             return
     
-        print "lupio!"
+        #print "lupio!"
         """self.moan1.play()
         self.rotateBy( 180 )
         self.node.setFluidPos(self.node, 0, CHASE_SPEED*globalClock.getDt(), 0)            

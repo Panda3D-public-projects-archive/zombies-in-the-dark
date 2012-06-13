@@ -15,8 +15,8 @@ class Game(DirectObject):
         base.win.setClearColor(VBase4(0, 0, 0, 0))
         self.parent = parent
         # GAMETYPE
-        #self.type = 'DEBUG' # 'FPS' or 'DEBUG'
-        self.type = 'FPS' # 'FPS' or 'DEBUG'
+        self.type = 'DEBUG' # 'FPS' or 'DEBUG'
+        #self.type = 'FPS' # 'FPS' or 'DEBUG'
         
         # Creating level geometry
         self.level = Level(self)
@@ -46,7 +46,7 @@ class Game(DirectObject):
         #messenger.toggleVerbose()
         
         # Instance one monster (needs to be done after setting up collision manager
-        Monster(1, self, 'nos', (9,14))
+        Monster(1, self, 'nos', (9,13))
         Monster(2, self, 'nos', (7,10))
         Monster(3, self, 'nos', (12,3))
         
