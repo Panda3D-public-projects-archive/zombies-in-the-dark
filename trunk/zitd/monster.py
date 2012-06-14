@@ -148,8 +148,8 @@ class Monster():
 
         self.path = None
 
-        taskMgr.doMethodLater(1, self.behaviourTask, 'behtask'+str(self.id) )
-        taskMgr.doMethodLater(1, self.debugMoveTask, 'DebugMoveMonsterTask'+str(self.id))
+        taskMgr.doMethodLater(1, self.behaviourTask, 'MonsterBehaviourTask'+str(self.id) )
+        taskMgr.doMethodLater(1, self.debugMoveTask, 'MonsterMoveTask'+str(self.id))
 
 
     def getLOS(self):
@@ -443,8 +443,8 @@ class Monster():
         if self.moan_sequence != None:
             self.moan_sequence.pause()
             self.moan_sequence = None
-        taskMgr.remove('behtask'+str(self.id))
-        taskMgr.remove('DebugMoveMonsterTask'+str(self.id))
+        taskMgr.remove('MonsterBehaviourTask'+str(self.id))
+        taskMgr.remove('MonsterMoveTask'+str(self.id))
         self.cn_head.node().clearPythonTag('node')
         self.cn_body.node().clearPythonTag('node')
         self.cn_pusher.node().clearPythonTag('node')  

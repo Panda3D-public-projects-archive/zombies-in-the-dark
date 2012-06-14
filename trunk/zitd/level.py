@@ -19,6 +19,7 @@ class Level():
         self.finish_tile = (0,0)
         
         self.tex_ext = '.png'
+        self.tex_offset = 0
         
         # Load textures
         self.ts_normal = TextureStage('wall_normal')
@@ -28,7 +29,8 @@ class Level():
         self.ts_glow = TextureStage('wall_glow')
         self.ts_glow.setMode(TextureStage.MGlow)   
         self.ts_add = TextureStage('add')
-        self.ts_add.setMode(TextureStage.MDecal)           
+        self.ts_add.setMode(TextureStage.MDecal) 
+        self.ts_model_exit = TextureStage('exit_model')          
         
         self.texa = loader.loadTexture('models/pk02_wall02a_C'+self.tex_ext)
         self.texa_normal = loader.loadTexture('models/pk02_wall02a_N'+self.tex_ext)
@@ -54,7 +56,10 @@ class Level():
         self.tex_floor_gloss = loader.loadTexture('models/pk02_floor01_S1'+self.tex_ext)  
         
         self.tex_floor_exit = loader.loadTexture('models/exit'+self.tex_ext)
-        self.tex_floor_exit_glow = loader.loadTexture('models/exit_I'+self.tex_ext)                  
+        self.tex_floor_exit_glow = loader.loadTexture('models/exit_I'+self.tex_ext) 
+        
+        self.tex_model_exit = loader.loadTexture('models/exit_model.png') 
+        self.tex_model_exit_glow = loader.loadTexture('models/exit_model_I.png')                
         
         self.texa.setMagfilter(Texture.FTLinearMipmapLinear)
         self.texa.setMinfilter(Texture.FTLinearMipmapLinear)
@@ -133,6 +138,8 @@ class Level():
                     if (pnmi.getRedVal(x,y) == 255 and pnmi.getBlueVal(x,y) == 0 and pnmi.getGreenVal(x,y) == 216):
                         self.loadFloor(x, pos_y, 'TILE_EXIT').reparentTo(self.floor_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                         self.finish_tile = (x, pos_y)
+                        self.exit_model = self.loadExitModel(x, pos_y)
+                        self.exit_model.reparentTo(self.node)
                     else:
                         self.loadFloor(x, pos_y, 'TILE_FLOOR').reparentTo(self.floor_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                     self.loadFloor(x, pos_y, 'TILE_CEIL').reparentTo(self.floor_node_dict[(int(x/chunk_size), int(y/chunk_size))])
@@ -197,7 +204,7 @@ class Level():
         self.light_task_timer = 0
         self.light_task_state = True
         self.light_task_time = random.randint(1, 2)
-        taskMgr.add(self.lightTask, 'LightTask')
+        taskMgr.add(self.levelTask, 'LevelTask')
     
             
     def loadWall(self, x, y, type):
@@ -255,6 +262,15 @@ class Level():
             model.setTexture(self.ts_glow, self.tex_floor_exit_glow)
         return model
     
+    def loadExitModel(self, x, y):
+        model = loader.loadModel('models/exit')
+        model.setScale(TILE_SIZE, TILE_SIZE, TILE_SIZE*ASPECT)
+        model.setPos(x*TILE_SIZE - TILE_SIZE/2, y*TILE_SIZE - TILE_SIZE/2, 0)
+        model.setTransparency(TransparencyAttrib.MAlpha)
+        model.setTexture(self.ts_model_exit, self.tex_model_exit)
+        model.setTexture(self.ts_glow, self.tex_model_exit_glow)
+        return model       
+    
     def loadDoor(self, x, y, type):
         node = loader.loadModel('models/door')
         node.setScale(TILE_SIZE, 10, TILE_SIZE*ASPECT)
@@ -276,7 +292,7 @@ class Level():
             render.setLight(plnp)
             self.lights.append(plight)
             
-    def lightTask(self, task):
+    def levelTask(self, task):
         if self.parent.parent.fsm.state == 'Pause':
             return task.cont
         self.light_task_timer = self.light_task_timer + globalClock.getDt()
@@ -293,6 +309,10 @@ class Level():
                 self.light_task_state = True
                 self.light_task_timer = 0
                 self.light_task_time = random.randint(1, 4)
+        
+        # Exit cube texture
+        self.tex_offset += globalClock.getDt() * 0.5
+        self.exit_model.setTexOffset(self.ts_model_exit, 0, self.tex_offset)
         return task.cont
         
     
@@ -306,7 +326,7 @@ class Level():
         return self.y_size
     
     def destroy(self):
-        taskMgr.remove('LightTask')
+        taskMgr.remove('LevelTask')
         self.node.removeNode()
     
     #TODO: Obavezno obrisati!!
