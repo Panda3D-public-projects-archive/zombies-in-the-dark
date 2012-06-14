@@ -15,6 +15,8 @@ class Level():
         self.x_size = pnmi.getXSize()
         self.y_size = pnmi.getYSize()
         
+        self.finish_tile = (0,0)
+        
         self.tex_ext = '.png'
         
         # Load textures
@@ -23,7 +25,9 @@ class Level():
         self.ts_gloss = TextureStage('wall_gloss')
         self.ts_gloss.setMode(TextureStage.MGloss)  
         self.ts_glow = TextureStage('wall_glow')
-        self.ts_glow.setMode(TextureStage.MGlow)              
+        self.ts_glow.setMode(TextureStage.MGlow)   
+        self.ts_add = TextureStage('add')
+        self.ts_add.setMode(TextureStage.MDecal)           
         
         self.texa = loader.loadTexture('models/pk02_wall02a_C'+self.tex_ext)
         self.texa_normal = loader.loadTexture('models/pk02_wall02a_N'+self.tex_ext)
@@ -46,7 +50,10 @@ class Level():
         
         self.tex_floor = loader.loadTexture('models/pk02_floor01_C'+self.tex_ext)
         self.tex_floor_normal = loader.loadTexture('models/pk02_floor01_N'+self.tex_ext)
-        self.tex_floor_gloss = loader.loadTexture('models/pk02_floor01_S1'+self.tex_ext)            
+        self.tex_floor_gloss = loader.loadTexture('models/pk02_floor01_S1'+self.tex_ext)  
+        
+        self.tex_floor_exit = loader.loadTexture('models/exit'+self.tex_ext)
+        self.tex_floor_exit_glow = loader.loadTexture('models/exit_I'+self.tex_ext)                  
         
         self.texa.setMagfilter(Texture.FTLinearMipmapLinear)
         self.texa.setMinfilter(Texture.FTLinearMipmapLinear)
@@ -117,12 +124,16 @@ class Level():
                     (pnmi.getRedVal(x,y) == 255 and pnmi.getBlueVal(x,y) == 255 and pnmi.getGreenVal(x,y) == 255) or
                     (pnmi.getRedVal(x,y) == 0 and pnmi.getBlueVal(x,y) == 255 and pnmi.getGreenVal(x,y) == 0) or
                     (pnmi.getRedVal(x,y) == 0 and pnmi.getBlueVal(x,y) == 0 and pnmi.getGreenVal(x,y) == 255) or
-                    (pnmi.getRedVal(x,y) == 128 and pnmi.getBlueVal(x,y) == 128 and pnmi.getGreenVal(x,y) == 128)
+                    (pnmi.getRedVal(x,y) == 128 and pnmi.getBlueVal(x,y) == 128 and pnmi.getGreenVal(x,y) == 128) or
+                    (pnmi.getRedVal(x,y) == 255 and pnmi.getBlueVal(x,y) == 0 and pnmi.getGreenVal(x,y) == 216)
                     ):
                     self.nav_graph[(x,pos_y)] = []
                     
-                    
-                    self.loadFloor(x, pos_y, 'TILE_FLOOR').reparentTo(self.floor_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                    if (pnmi.getRedVal(x,y) == 255 and pnmi.getBlueVal(x,y) == 0 and pnmi.getGreenVal(x,y) == 216):
+                        self.loadFloor(x, pos_y, 'TILE_EXIT').reparentTo(self.floor_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                        self.finish_tile = (x, pos_y)
+                    else:
+                        self.loadFloor(x, pos_y, 'TILE_FLOOR').reparentTo(self.floor_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                     self.loadFloor(x, pos_y, 'TILE_CEIL').reparentTo(self.floor_node_dict[(int(x/chunk_size), int(y/chunk_size))])
                     
                     # neighbours
@@ -236,6 +247,11 @@ class Level():
             model.setTexture(self.tex_floor)
             model.setTexture(self.ts_normal, self.tex_floor_normal)
             model.setTexture(self.ts_gloss, self.tex_floor_gloss)  
+        elif type == 'TILE_EXIT':
+            model.setPos(x*TILE_SIZE, y*TILE_SIZE, 0)
+            model.setTexture(self.tex_floor)
+            model.setTexture(self.ts_add, self.tex_floor_exit)
+            model.setTexture(self.ts_glow, self.tex_floor_exit_glow)
         return model
     
     def loadDoor(self, x, y, type):

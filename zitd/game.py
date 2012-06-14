@@ -62,7 +62,6 @@ class Game(DirectObject):
         #meter = SceneGraphAnalyzerMeter('meter', render.node())
         #meter.setupWindow(base.win) 
         
-
         
     def pause(self):
         self.player.clearKeyEvents()

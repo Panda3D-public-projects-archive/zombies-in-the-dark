@@ -219,6 +219,10 @@ class Player(DirectObject):
         if self.can_move == False:
             return task.cont
         
+        tilepos = self.node.getPos() / TILE_SIZE
+        if (int(tilepos.getX()), int(tilepos.getY())) == self.parent.level.finish_tile:
+            print "POBJEDA!"
+        
         #monsters only think once per second so we need to keep gunshots remembered for at least 2 seconds
         if self.gunshot_at:
             if time.time() - self.gunshot_at[1] > GUNSHOT_TIMEOUT:
