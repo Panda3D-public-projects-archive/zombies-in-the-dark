@@ -88,8 +88,14 @@ class Game(DirectObject):
             if t in allTiles:
                 break
         self.zombie_counter += 1
-        self.zombies.append( Monster(self.zombie_counter, self, 'nos', t) )
-            
+        if self.zombie_counter == 1:
+            t = (9,13)
+        self.zombies.append( Monster(self.zombie_counter, self, 'baby', t) )
+    
+    def removeEnemy(self, monster):
+        monster.destroy()
+        self.zombies.remove(monster)
+      
     def pause(self):
         self.player.clearKeyEvents()
         self.player.disconnectMouse()
