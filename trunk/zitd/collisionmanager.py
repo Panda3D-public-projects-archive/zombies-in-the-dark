@@ -80,8 +80,8 @@ class CollisionManager(DirectObject):
         monster.cn_pusher.node().setPythonTag('node', monster)
 
         #TODO: maknuti        
-        monster.cn_head.show()  
-        monster.cn_body.show() 
+        #monster.cn_head.show()  
+        #monster.cn_body.show() 
         
         # CollisionRay for monster-player LoS detection
         monster.ray = CollisionRay()
@@ -89,6 +89,7 @@ class CollisionManager(DirectObject):
         monster.cn_ray.node().addSolid(monster.ray) 
         monster.cn_ray.node().setFromCollideMask(COLL_MONSTER_PLAYER_LOS)
         monster.cn_ray.node().setIntoCollideMask(BitMask32.allOff())
+        monster.cn_ray.node().setPythonTag('node', monster)
         self.los_traverser.addCollider(monster.cn_ray, self.coll_queue)
         
         # Pusher for monster-wall detection
@@ -102,8 +103,12 @@ class CollisionManager(DirectObject):
         self.los_traverser.traverse(render)
         self.coll_queue.sortEntries()
         if self.coll_queue.getNumEntries() > 0:
-            if self.coll_queue.getEntry(0).getIntoNode().getName() == 'PlayerCollisionNode':
-                return True
+            for entry in self.coll_queue.getEntries():
+                if monster == entry.getFromNodePath().getPythonTag('node'):
+                    if entry.getIntoNode().getName() == 'PlayerCollisionNode':
+                        return True
+                    else:
+                        return False
         return False
 
     def handleBulletWallCollision(self, entry):
@@ -134,6 +139,7 @@ class CollisionManager(DirectObject):
             monster_cn.clearPythonTag('node')
             monster.cn_body.node().clearPythonTag('node')
             monster.cn_pusher.node().clearPythonTag('node')
+            monster.cn_ray.node().clearPythonTag('node')
             monster.destroy()
         print monster.hp
         
@@ -154,7 +160,8 @@ class CollisionManager(DirectObject):
         else:
             monster_cn.clearPythonTag('node')
             monster.cn_head.node().clearPythonTag('node')
-            monster.cn_pusher.node().clearPythonTag('node')            
+            monster.cn_pusher.node().clearPythonTag('node') 
+            monster.cn_ray.node().clearPythonTag('node')           
             monster.destroy()
         print monster.hp
         

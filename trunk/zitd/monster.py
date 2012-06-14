@@ -87,7 +87,14 @@ class Monster():
             self.zpos = 5
             self.node.setPos(pos[0]*TILE_SIZE,pos[1]*TILE_SIZE,self.zpos)
             self.node.setScale(2)
-            self.node.setColor(1,0,0)
+            if self.id == 1:
+                self.node.setColor(1,0,0)
+            elif self.id == 2:
+                self.node.setColor(0,1,0)
+            elif self.id == 3:
+                self.node.setColor(0,0,1)
+            else:
+                self.node.setColor(1,1,1)
             self.node.reparentTo(render)
 
 
