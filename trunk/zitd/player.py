@@ -132,9 +132,12 @@ class Player(DirectObject):
             self.gun_click_sound.play()
             None
             
-    def getDamage(self, damage=1):
+    def getDamage(self, damage=21):
         self.damage_anim.finish()
         self.damage_anim = Parallel()
+        
+        damage = 10 + d(15)
+        print "dmg:", damage
         
         # player got damage but is still alive
         if self.health - damage > 0:
