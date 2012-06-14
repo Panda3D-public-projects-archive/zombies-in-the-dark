@@ -31,7 +31,10 @@ class App(DirectObject):
         self.fsm.request('Pause')
         
     def resume(self):
-        self.fsm.request('ResumeGame')        
+        self.fsm.request('ResumeGame')
+        
+    def gameOver(self):
+        self.fsm.request('GameOver')                
         
 class AppFSM(FSM.FSM):
     def __init__(self, parent, name):
@@ -40,9 +43,10 @@ class AppFSM(FSM.FSM):
 
         self.defaultTransitions = {
             'Menu'       : ['NewGame'],
-            'NewGame'    : ['Pause'],
+            'NewGame'    : ['Pause', 'GameOver'],
             'Pause'      : ['ResumeGame', 'Menu'],
-            'ResumeGame' : ['Pause']
+            'ResumeGame' : ['Pause', 'GameOver'],
+            'GameOver'   : ['NewGame']
             }
     
     def enterMenu(self):
@@ -87,21 +91,17 @@ class AppFSM(FSM.FSM):
         self.parent.game.resume()
         # Instancing game UI
         self.parent.gameui = GameUI(self.parent)
-        """
-        self.accept('u', self.parent.gameui.minusHealth)
-        self.accept('i', self.parent.gameui.plusHealth)
-        self.accept('o', self.parent.gameui.minusBullets)
-        self.accept('p', self.parent.gameui.plusBullets)
-        """
         
     def exitResumeGame(self):
         self.parent.gameui.cleanup()
-        """
-        self.ignore('u')
-        self.ignore('i')
-        self.ignore('o')
-        self.ignore('p')
-        """
-
+        
+    def enterGameOver(self):
+        self.parent.gameoverui = GameOverUI(self.parent)
+        self.ignore('escape')
+    
+    def exitGameOver(self):
+        self.acceptOnce('escape', self.parent.pause)
+        self.parent.gameoverui.cleanup()
+        
 a = App()
 run()
