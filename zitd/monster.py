@@ -98,6 +98,7 @@ class Monster():
         self.shot_body = self.audio3d.loadSfx('audio/Zombie Moan-SoundBible.com-565291980.wav')
         self.moan1 = self.audio3d.loadSfx('audio/Mindless Zombie Awakening-SoundBible.com-255444348.wav')
         self.moan2 = self.audio3d.loadSfx('audio/Zombie Brain Eater-SoundBible.com-1076387080.wav')
+        self.aggro_sound = self.audio3d.loadSfx('audio/Mummy Zombie-SoundBible.com-1966938763.wav')
         self.audio3d.attachSoundToObject(self.moan1, self.node)
         self.audio3d.attachSoundToObject(self.moan2, self.node)
         self.audio3d.attachSoundToObject(self.shot_head, self.node)
@@ -109,7 +110,7 @@ class Monster():
         
         self.parent.collision_manager.createMonsterCollision(self)
 
-
+        self.aggro_sound_last_played = 0
         #--------------------------brain-------------------------
         self.node.setH( 160 )
         self.old_pos = None
@@ -255,7 +256,10 @@ class Monster():
         
         #top priority, if we sense a player, go after him!
         if self.sensePlayer():
-            print "CHASE!!!!"
+            if time.time() - self.aggro_sound_last_played > 5:
+                self.aggro_sound.play()
+                self.aggro_sound_last_played = time.time()
+            
             self.action = ACTION_CHASE
             return task.again
 
