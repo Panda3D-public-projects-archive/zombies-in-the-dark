@@ -44,7 +44,6 @@ class Game(DirectObject):
         # Instance collision manager
         self.collision_manager = CollisionManager(self)
         self.collision_manager.createLevelCollision(self.level)
-        #messenger.toggleVerbose()
         
         self.zombies = []
         self.zombie_counter = 0
@@ -53,7 +52,12 @@ class Game(DirectObject):
             self.spawnEnemy()
         
         # Instance class for debug output
-        self.debug = DebugOptions(self)
+        #self.debug = DebugOptions(self)
+        
+        # Setup default options (which have been previously set in DebugOptions)
+        # If you uncomment DebugOptions, comment out two lines below
+        self.alight.setColor(VBase4(0.03, 0.03, 0.03, 1.0))
+        render.setShaderAuto()
         
         # Instance common filters class (blur, AO, bloom)
         self.filters = CommonFilters(base.win, base.cam)
@@ -62,6 +66,7 @@ class Game(DirectObject):
         #PStatClient.connect()
         #meter = SceneGraphAnalyzerMeter('meter', render.node())
         #meter.setupWindow(base.win) 
+        #messenger.toggleVerbose()        
     
     def gameWin(self):
         self.player.can_move = False
