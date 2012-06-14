@@ -74,6 +74,7 @@ class Game(DirectObject):
         i += 1
         # Player finished all levels
         if len(LEVELS) == i:
+            self.parent.fsm.request('GameWin')
             print "YOU WIN THA GAME!"
         # Player not yet finished all levels, move to next level
         else:
