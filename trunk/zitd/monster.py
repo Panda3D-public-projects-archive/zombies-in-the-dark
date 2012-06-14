@@ -90,7 +90,8 @@ class Monster():
             self.node.setColor(1,0,0)
             self.node.reparentTo(render)
 
-        self.patrol_points = [(1,1), (4,11), (12,20), (18,4), (19,17)]
+
+        #self.patrol_points = [(1,1), (4,11), (12,20), (18,4), (19,17)]
         
         #initialize 3d sound
         self.audio3d = Audio3DManager.Audio3DManager(base.sfxManagerList[0], base.camera)
@@ -108,9 +109,7 @@ class Monster():
         self.audio3d.attachSoundToObject(self.attack_sound, self.node)
         delay1 = Wait(25+d(15))
         delay2 = Wait(25+d(15))
-        self.moan_sequence = None
         self.moan_sequence = Sequence(SoundInterval(self.moan1), delay1, SoundInterval(self.moan2), delay2).loop()
-        self.move_sequence = None
         
         self.parent.collision_manager.createMonsterCollision(self)
 
@@ -289,7 +288,7 @@ class Monster():
                 return task.again
 
             #build a new path for patrol
-            dest = self.patrol_points[random.randint(0,4)]
+            dest = self.getNewPatrolPoint()
             self.path = pathFind(self.parent.level, getTile(self.node.getPos()), dest)
             self.action = ACTION_FOLLOW_PATH
                 
@@ -373,6 +372,15 @@ class Monster():
         self.node.setH( (self.node.getH() + value) % 360  )
         
 
+    def getNewPatrolPoint(self):
+        lvl = self.parent.level
+        allTiles = lvl.getFloorTiles()
+        while True:
+            t = ( d(lvl.getMaxX()), d(lvl.getMaxY()) )
+            if t in allTiles:
+                return t
+            
+
     def hitWall(self):
         
         if self.action == ACTION_CHASE:
@@ -428,9 +436,6 @@ class Monster():
         if self.moan_sequence != None:
             self.moan_sequence.pause()
             self.moan_sequence = None
-        if self.move_sequence != None:
-            self.move_sequence.pause()
-            self.move_sequence = None    
         taskMgr.remove('behtask'+str(self.id))
         taskMgr.remove('DebugMoveMonsterTask'+str(self.id))
         #TODO: vratiti kad bude Actor
