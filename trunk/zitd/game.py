@@ -85,7 +85,12 @@ class Game(DirectObject):
                 self.spawnEnemy()           
             self.player.node.setPos(self.level.start_pos[0]*TILE_SIZE,self.level.start_pos[1]*TILE_SIZE,TILE_SIZE*ASPECT/1.5)
             self.player.can_move = True
-            
+    
+    def gameOver(self):
+        self.player.clearKeyEvents()
+        self.player.disconnectMouse()
+        self.parent.gameOver()
+        
     def spawnEnemy(self):
         allTiles = self.level.getFloorTiles()
         while True:
