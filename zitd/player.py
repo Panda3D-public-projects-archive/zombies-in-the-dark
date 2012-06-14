@@ -199,6 +199,7 @@ class Player(DirectObject):
             # shut down player
             self.clearKeyEvents()
             taskMgr.remove('UpdatePlayerTask')
+            self.parent.gameOver()
             print "Killed me!"
     
     def setKeys(self, key, value):
