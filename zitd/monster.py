@@ -103,8 +103,8 @@ class Monster():
         self.audio3d.attachSoundToObject(self.shot_head, self.node)
         self.audio3d.attachSoundToObject(self.shot_body, self.node)
         delay = Wait(30)
-        self.moan_sequence = Sequence(SoundInterval(self.moan1), delay, SoundInterval(self.moan2), delay).loop()
         self.moan_sequence = None
+        self.moan_sequence = Sequence(SoundInterval(self.moan1), delay, SoundInterval(self.moan2), delay).loop()
         self.move_sequence = None
         
         self.parent.collision_manager.createMonsterCollision(self)
@@ -250,8 +250,10 @@ class Monster():
 
 
     def behaviourTask(self, task):
-        #top priority, if we sense a player, go after him!
+        if self.pause:
+            return task.again
         
+        #top priority, if we sense a player, go after him!
         if self.sensePlayer():
             print "CHASE!!!!"
             self.action = ACTION_CHASE
@@ -395,13 +397,15 @@ class Monster():
         """ 
         pass
 
-    def pause(self):
-        self.moan_sequence.pause()
+    def pauze(self):
+        if self.moan_sequence:
+            self.moan_sequence.pause()
         self.pause = True
         
         
     def resume(self):
-        self.moan_sequence.resume()
+        if self.moan_sequence:
+            self.moan_sequence.resume()
         self.pause = False
         
         

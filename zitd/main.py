@@ -33,6 +33,9 @@ class App(DirectObject):
     def pause(self):
         self.fsm.request('Pause')
         
+    def resume(self):
+        self.fsm.request('ResumeGame')        
+        
 class AppFSM(FSM.FSM):
     def __init__(self, parent, name):
         FSM.FSM.__init__(self, name)
@@ -73,7 +76,7 @@ class AppFSM(FSM.FSM):
         self.parent.game.pause()
         # Instancing pause game UI
         self.parent.pauseui = PauseUI(self.parent)
-        self.acceptOnce('escape', taskMgr.stop)
+        self.acceptOnce('escape', self.parent.resume)
         
     def exitPause(self):
         self.acceptOnce('escape', self.parent.pause)

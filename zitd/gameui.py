@@ -49,6 +49,8 @@ class PauseUI():
         element.AddEventListener('click', self.resumeButPressed, True)
         element = self.doc.GetElementById('menu')
         element.AddEventListener('click', self.menuButRedPressed, True)
+        for z in self.parent.game.zombies:
+            z.pauze()
 
     def resumeButPressed(self):
         self.parent.fsm.request('ResumeGame')
@@ -87,6 +89,11 @@ class GameUI():
         element.style.width = str(self.parent.game.player.health * 1.5) + 'px'
         
         self.doc.Show()
+        
+        for z in self.parent.game.zombies:
+            z.resume()
+
+        
         
     def minusHealth(self, dh=1):
         self.parent.game.player.health -= dh
