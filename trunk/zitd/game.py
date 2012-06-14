@@ -45,10 +45,11 @@ class Game(DirectObject):
         self.collision_manager = CollisionManager(self)
         #messenger.toggleVerbose()
         
+        self.zombies = []
         # Instance one monster (needs to be done after setting up collision manager
-        Monster(1, self, 'nos', (9,13))
-        #Monster(2, self, 'nos', (7,10))
-        #Monster(3, self, 'nos', (12,3))
+        self.zombies.append( Monster(1, self, 'nos', (9,13)) )
+        self.zombies.append( Monster(2, self, 'nos', (7,10)) )
+        self.zombies.append( Monster(3, self, 'nos', (12,3)) )
         
         # Instance class for debug output
         self.debug = DebugOptions(self)
@@ -73,7 +74,11 @@ class Game(DirectObject):
     def pause(self):
         self.player.clearKeyEvents()
         self.player.disconnectMouse()
+        for z in self.zombies:
+            z.pauze()
         
     def resume(self):
         self.player.setKeyEvents()
         self.player.reconnectMouse()
+        for z in self.zombies:
+            z.resume()
