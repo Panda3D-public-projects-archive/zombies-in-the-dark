@@ -4,7 +4,7 @@ from direct.gui.OnscreenText import OnscreenText#@UnresolvedImport
 from direct.gui.OnscreenImage import OnscreenImage
 from direct.filter.CommonFilters import CommonFilters#@UnresolvedImport
 from panda3d.rocket import *
-
+import random
 
 class MenuUI():
     
@@ -134,3 +134,37 @@ class GameUI():
         self.parent.rContext.UnloadAllDocuments()
         self.parent = None
     
+class GameOverUI():
+    
+    def __init__(self, parent):
+        self.parent = parent   
+        
+        LoadFontFace("ui/verdana.ttf")       #@UnresolvedImport 
+        self.parent.rRegion.setActive(1)
+        self.parent.rContext = self.parent.rRegion.getContext()
+        
+        self.gameover_list = []
+        self.gameover_list.append('Brraaaains, brraaaaaaains!')
+        self.gameover_list.append('The only thing missing is some fava beans and a nice chianti.')
+        self.gameover_list.append('You died. The game is over.')
+        
+        #context.LoadDocument('assets/background.rml').Show()
+        
+        self.doc = self.parent.rContext.LoadDocument('ui/gameover.rml')
+        self.doc.Show()
+
+        random.seed()
+        x = random.randint(0, len(self.gameover_list) - 1)
+        element = self.doc.GetElementById('status_bar')
+        element.inner_rml = self.gameover_list[x]
+        
+        element = self.doc.GetElementById('new')
+        element.AddEventListener('click', self.newGameButPressed, True)
+
+    def newGameButPressed(self):
+        self.parent.fsm.request('NewGame')
+
+    def cleanup(self):
+        self.parent.rRegion.setActive(0)
+        self.parent.rContext.UnloadAllDocuments()
+        self.parent = None
