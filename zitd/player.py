@@ -47,9 +47,9 @@ class Player(DirectObject):
         #self.lens = PerspectiveLens()
         #self.slight.setLens(self.lens)
         self.slnp = self.node.attachNewNode(self.slight)
-        self.slnp.node().getLens().setFov(55)
-        self.slnp.node().getLens().setNearFar(1, 10)
-        self.slight.setExponent(45)
+        self.slnp.node().getLens().setFov(88)
+        self.slnp.node().getLens().setNearFar(1, 70)
+        self.slight.setExponent(10)
         self.slight.setAttenuation(Point3(0.737, 0.134, 0.001))
         render.setLight(self.slnp)
         self.flashlight = True
@@ -91,8 +91,8 @@ class Player(DirectObject):
         self.accept('mouse1', self.shoot)
         self.accept('mouse3', self.toggleFlashlight)
         #TODO: maknuti ovo
-        self.accept('x', self.toggleMovement)
-        
+        self.accept('x', self.disconnectMouse)
+        self.accept('y', self.reconnectMouse)
     def clearKeyEvents(self):
         self.ignoreAll()
     

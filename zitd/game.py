@@ -88,8 +88,8 @@ class Game(DirectObject):
             if t in allTiles:
                 break
         self.zombie_counter += 1
-        if self.zombie_counter == 1:
-            t = (9,13)
+        #if self.zombie_counter == 1:
+        #    t = (9,13)
         self.zombies.append( Monster(self.zombie_counter, self, 'baby', t) )
     
     def removeEnemy(self, monster):
