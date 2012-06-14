@@ -17,10 +17,7 @@ class CollisionManager(DirectObject):
         self.player_cn.node().setFromCollideMask(COLL_PLAYER_WALL)
         self.player_cn.node().setIntoCollideMask(COLL_MONSTER_PLAYER_LOS)
         #TODO: maknuti        
-        self.player_cn.show()
-        
-        # Create wall collision objects
-        self.parent.level.wall_node.setCollideMask(COLL_PLAYER_WALL | COLL_BULLET_WALL_MONSTER | COLL_MONSTER_WALL | COLL_MONSTER_PLAYER_LOS)     
+        self.player_cn.show()    
         
         # FluidPusher will be used to handle player-wall collisions and automatically push player in the right direction
         self.pusher = CollisionHandlerFluidPusher()
@@ -52,6 +49,9 @@ class CollisionManager(DirectObject):
         self.accept('BulletCollisionNode-into-MonsterBodyCollisionNode', self.handleBulletMonsterBodyCollision)
         self.accept('MonsterPusherCollisionNode-into-Wall', self.handleMonsterWallCollision)
 
+    def createLevelCollision(self, level):
+        level.wall_node.setCollideMask(COLL_PLAYER_WALL | COLL_BULLET_WALL_MONSTER | COLL_MONSTER_WALL | COLL_MONSTER_PLAYER_LOS) 
+    
     def createBulletCollision(self, bullet):
         bullet.cn = bullet.node.attachNewNode(CollisionNode('BulletCollisionNode'))
         bullet.cn.node().addSolid(CollisionSphere(0, 0, 0, 1.1))
@@ -136,11 +136,8 @@ class CollisionManager(DirectObject):
         if monster.hp > HEADSHOT_DAMAGE:
             monster.hp -= HEADSHOT_DAMAGE
         else:
-            monster_cn.clearPythonTag('node')
-            monster.cn_body.node().clearPythonTag('node')
-            monster.cn_pusher.node().clearPythonTag('node')
-            monster.cn_ray.node().clearPythonTag('node')
             monster.destroy()
+            self.parent.zombies.remove(monster)
         print monster.hp
         
     def handleBulletMonsterBodyCollision(self, entry):
@@ -157,12 +154,9 @@ class CollisionManager(DirectObject):
         monster.shot_body.play()
         if monster.hp > BODYSHOT_DAMAGE:
             monster.hp -= BODYSHOT_DAMAGE
-        else:
-            monster_cn.clearPythonTag('node')
-            monster.cn_head.node().clearPythonTag('node')
-            monster.cn_pusher.node().clearPythonTag('node') 
-            monster.cn_ray.node().clearPythonTag('node')           
+        else:          
             monster.destroy()
+            self.parent.zombies.remove(monster)
         print monster.hp
         
     def handleMonsterWallCollision(self, entry):

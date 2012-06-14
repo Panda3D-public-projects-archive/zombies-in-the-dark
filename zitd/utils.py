@@ -7,6 +7,8 @@ ASPECT = 0.8
 HEADSHOT_DAMAGE = 50
 BODYSHOT_DAMAGE = 30
 
+LEVELS = ['eob1', 'test']
+
 # Code by preusser from Panda3D forums
 # Link: http://www.panda3d.org/forums/viewtopic.php?t=11268
 def loadImageAsPlane(filepath, yresolution = 600):
