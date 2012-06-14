@@ -19,7 +19,7 @@ class Game(DirectObject):
         self.type = 'FPS' # 'FPS' or 'DEBUG'
         
         # Creating level geometry
-        self.level = Level(self)
+        self.level = Level(self, LEVELS[0])
         # Instance the player controller
         self.player = Player(self, self.level.start_pos)
         if self.type == 'FPS':
@@ -43,13 +43,14 @@ class Game(DirectObject):
         
         # Instance collision manager
         self.collision_manager = CollisionManager(self)
+        self.collision_manager.createLevelCollision(self.level)
         #messenger.toggleVerbose()
         
         self.zombies = []
+        self.zombie_counter = 0
         # Instance one monster (needs to be done after setting up collision manager
-        self.zombies.append( Monster(1, self, 'nos', (9,13)) )
-        self.zombies.append( Monster(2, self, 'nos', (7,10)) )
-        self.zombies.append( Monster(3, self, 'nos', (12,3)) )
+        for i in xrange(3):
+            self.spawnEnemy()
         
         # Instance class for debug output
         self.debug = DebugOptions(self)
@@ -61,8 +62,34 @@ class Game(DirectObject):
         #PStatClient.connect()
         #meter = SceneGraphAnalyzerMeter('meter', render.node())
         #meter.setupWindow(base.win) 
-        
-        
+    
+    def gameWin(self):
+        self.player.can_move = False
+        i = LEVELS.index(self.level.name)
+        i += 1
+        # Player finished all levels
+        if len(LEVELS) == i:
+            print "YOU WIN THA GAME!"
+        # Player not yet finished all levels, move to next level
+        else:
+            self.cleanup()
+            self.level = Level(self, LEVELS[i])
+            self.collision_manager.createLevelCollision(self.level)
+            self.zombie_counter = 0
+            for i in xrange(3):
+                self.spawnEnemy()           
+            self.player.node.setPos(self.level.start_pos[0]*TILE_SIZE,self.level.start_pos[1]*TILE_SIZE,TILE_SIZE*ASPECT/1.5)
+            self.player.can_move = True
+            
+    def spawnEnemy(self):
+        allTiles = self.level.getFloorTiles()
+        while True:
+            t = ( d(self.level.getMaxX()), d(self.level.getMaxY()) )
+            if t in allTiles:
+                break
+        self.zombie_counter += 1
+        self.zombies.append( Monster(self.zombie_counter, self, 'nos', t) )
+            
     def pause(self):
         self.player.clearKeyEvents()
         self.player.disconnectMouse()
@@ -76,3 +103,10 @@ class Game(DirectObject):
         self.player.pause = False
         for z in self.zombies:
             z.resume()
+            
+    def cleanup(self):
+        for z in self.zombies[:]:
+            z.destroy()            
+            self.zombies.remove(z)
+        self.level.destroy()
+        self.level = None

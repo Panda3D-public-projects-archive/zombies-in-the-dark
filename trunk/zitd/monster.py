@@ -445,36 +445,16 @@ class Monster():
             self.moan_sequence = None
         taskMgr.remove('behtask'+str(self.id))
         taskMgr.remove('DebugMoveMonsterTask'+str(self.id))
+        self.cn_head.node().clearPythonTag('node')
+        self.cn_body.node().clearPythonTag('node')
+        self.cn_pusher.node().clearPythonTag('node')  
+        self.cn_ray.node().clearPythonTag('node')
         #TODO: vratiti kad bude Actor
         #self.node.delete()
         #self.node.cleanup()
         self.node.removeNode()
 
-        
-    """
+    #TODO: Obavezno obrisati!!        
     def __del__(self):
-        print("Instance of Custom Class Alpha Removed")
-    """        
-    
-    """
-    def moveSequence(self):
-        move = Sequence()
-        start = self.node.getPos()
-        for p in self.path:
-            dest = Point3(p[0]*TILE_SIZE, p[1]*TILE_SIZE, 5)
-            i = Sequence(self.node.posInterval(self.speed, dest, start), Func(self.updatePosition, p))
-            start = dest
-            move.append(i)
-        move.append(Func(self.setAction, 'stand'))
-        return move
-        
-        
-    def updatePosition(self, dest):
-        self.pos = dest
-
-
-    def setAction(self, action):
-        self.action = action
-    """
-
+        print("Zombie deleted")
     

@@ -3,14 +3,15 @@ from utils import *
 import random
 
 class Level():
-    def __init__(self, parent):
+    def __init__(self, parent, name):
         self.parent = parent
+        self.name = name
         self.node = render.attachNewNode('LevelNode')
         self.wall_node = self.node.attachNewNode('LevelWallNode')
         self.rf_light_node = self.node.attachNewNode('RedFlickeringLightNode')
         self.lights = []
         pnmi = PNMImage()
-        pnmi.read(Filename('levels/eob1.png'))
+        pnmi.read(Filename('levels/'+name+'.png'))
         self.nav_graph = {}
         self.x_size = pnmi.getXSize()
         self.y_size = pnmi.getYSize()
@@ -303,5 +304,13 @@ class Level():
     
     def getMaxY(self):
         return self.y_size
+    
+    def destroy(self):
+        taskMgr.remove('LightTask')
+        self.node.removeNode()
+    
+    #TODO: Obavezno obrisati!!
+    def __del__(self):
+        print "Level deleted"
     
     

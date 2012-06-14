@@ -221,7 +221,7 @@ class Player(DirectObject):
         
         tilepos = self.node.getPos() / TILE_SIZE
         if (int(tilepos.getX()), int(tilepos.getY())) == self.parent.level.finish_tile:
-            print "POBJEDA!"
+            self.parent.gameWin()
         
         #monsters only think once per second so we need to keep gunshots remembered for at least 2 seconds
         if self.gunshot_at:

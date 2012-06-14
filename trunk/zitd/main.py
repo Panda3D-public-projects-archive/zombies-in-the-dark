@@ -3,10 +3,7 @@ from direct.showbase.ShowBase import ShowBase#@UnresolvedImport
 from direct.showbase.DirectObject import DirectObject
 from debug.debugoptions import DebugOptions
 from debug.cameramanager import CameraManager
-from player import Player
 from utils import *
-from level import Level
-from monster import Monster
 from panda3d.rocket import *
 from gameui import *
 from game import *
