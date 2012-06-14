@@ -109,7 +109,8 @@ class Monster():
         self.audio3d.attachSoundToObject(self.attack_sound, self.node)
         delay1 = Wait(25+d(15))
         delay2 = Wait(25+d(15))
-        self.moan_sequence = Sequence(SoundInterval(self.moan1), delay1, SoundInterval(self.moan2), delay2).loop()
+        self.moan_sequence = Sequence(SoundInterval(self.moan1), delay1, SoundInterval(self.moan2), delay2)
+        self.moan_sequence.loop()
         
         self.parent.collision_manager.createMonsterCollision(self)
 
@@ -192,7 +193,6 @@ class Monster():
             else:
                 dest = getTile( p_pos_abs )
                 path = pathFind(self.parent.level, getTile( self.node.getPos()), dest)
-                print "novi path:", path
                 if path:
                     self.path = path 
                     self.orders = ORDERS_PATROL
@@ -418,7 +418,7 @@ class Monster():
         if self.moan_sequence:
             self.moan_sequence.pause()
         self.pause = True
-        
+
         
     def resume(self):
         if self.moan_sequence:
