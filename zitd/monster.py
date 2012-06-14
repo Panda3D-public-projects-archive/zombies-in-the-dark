@@ -99,6 +99,7 @@ class Monster():
         self.moan1 = self.audio3d.loadSfx('audio/Mindless Zombie Awakening-SoundBible.com-255444348.wav')
         self.moan2 = self.audio3d.loadSfx('audio/Zombie Brain Eater-SoundBible.com-1076387080.wav')
         self.aggro_sound = self.audio3d.loadSfx('audio/Mummy Zombie-SoundBible.com-1966938763.wav')
+        self.attack_sound = self.audio3d.loadSfx('audio/Chopping Off Limb-SoundBible.com-884800545.wav')
         self.audio3d.attachSoundToObject(self.moan1, self.node)
         self.audio3d.attachSoundToObject(self.moan2, self.node)
         self.audio3d.attachSoundToObject(self.shot_head, self.node)
@@ -310,6 +311,7 @@ class Monster():
                         
             if self.distanceToPlayer() <= MELEE_RANGE and self.angleToPlayerAbs() <= 45 and self.getLOS():
                 if time.time() - self.last_melee >= MELEE_TIME:
+                    self.attack_sound.play()
                     self.parent.player.getDamage()
                     self.last_melee = time.time()
         
