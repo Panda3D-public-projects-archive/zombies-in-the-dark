@@ -17,7 +17,7 @@ class CollisionManager(DirectObject):
         self.player_cn.node().setFromCollideMask(COLL_PLAYER_WALL)
         self.player_cn.node().setIntoCollideMask(COLL_MONSTER_PLAYER_LOS)
         #TODO: maknuti        
-        self.player_cn.show()    
+        #self.player_cn.show()    
         
         # FluidPusher will be used to handle player-wall collisions and automatically push player in the right direction
         self.pusher = CollisionHandlerFluidPusher()
@@ -59,22 +59,23 @@ class CollisionManager(DirectObject):
         bullet.cn.node().setIntoCollideMask(BitMask32.allOff())
         bullet.cn.node().setPythonTag('node', bullet)
         #TODO: maknuti
-        bullet.cn.show()        
+        #bullet.cn.show()        
         self.traverser.addCollider(bullet.cn, self.coll_event)
         
     def createMonsterCollision(self, monster):
-        monster.cn_head = monster.node.attachNewNode(CollisionNode('MonsterHeadCollisionNode'))
-        monster.cn_head.node().addSolid(CollisionSphere(0, 0, 0, 1.2))
+        monster.cn_head = monster.head_node.attachNewNode(CollisionNode('MonsterHeadCollisionNode'))
+        monster.cn_head.node().addSolid(CollisionSphere(0, 0, 0, 35))
         monster.cn_head.node().setIntoCollideMask(COLL_BULLET_WALL_MONSTER)
         monster.cn_head.node().setPythonTag('node', monster)
-        monster.cn_body = monster.node.attachNewNode(CollisionNode('MonsterBodyCollisionNode'))
-        monster.cn_body.node().addSolid(CollisionSphere(0, 0, 0, 1.5))
+        monster.cn_head.setPos(0, -10, 30)
+        monster.cn_body = monster.body_node.attachNewNode(CollisionNode('MonsterBodyCollisionNode'))
+        monster.cn_body.node().addSolid(CollisionSphere(0, 0, 0, 40))
         monster.cn_body.node().setIntoCollideMask(COLL_BULLET_WALL_MONSTER)
         monster.cn_body.node().setPythonTag('node', monster)
-        monster.cn_body.setPos(0,0,-2)        
+        monster.cn_body.setPos(0, 0, 0)        
         # For some reason if we position collision node a bit below original node, collision pusher does not work
         monster.cn_pusher = monster.node.attachNewNode(CollisionNode('MonsterPusherCollisionNode'))
-        monster.cn_pusher.node().addSolid(CollisionSphere(0, 0, 0, 1.2))
+        monster.cn_pusher.node().addSolid(CollisionSphere(0, 0, 0, 1.8))
         monster.cn_pusher.node().setFromCollideMask(COLL_MONSTER_WALL)
         monster.cn_pusher.node().setIntoCollideMask(BitMask32.allOff())
         monster.cn_pusher.node().setPythonTag('node', monster)
@@ -82,6 +83,7 @@ class CollisionManager(DirectObject):
         #TODO: maknuti        
         #monster.cn_head.show()  
         #monster.cn_body.show() 
+        #monster.cn_pusher.show()
         
         # CollisionRay for monster-player LoS detection
         monster.ray = CollisionRay()
@@ -124,7 +126,6 @@ class CollisionManager(DirectObject):
     def handleBulletMonsterHeadCollision(self, entry):
         bullet_cn = entry.getFromNodePath()
         bullet = bullet_cn.getPythonTag('node')
-        bullet_cn.clearPythonTag('node')
         if bullet in self.parent.player.bullet_objects:
             self.parent.player.bullet_objects.remove(bullet)
         if bullet != None:
@@ -133,17 +134,21 @@ class CollisionManager(DirectObject):
         monster_cn = entry.getIntoNodePath()
         monster = monster_cn.getPythonTag('node')
         monster.shot_head.play()
+        monster.node.play('hit1')
+        duration = monster.node.getNumFrames('hit1') / 24  # animation play rate
+        taskMgr.doMethodLater(duration, monster.finishedAnim, 'FinishedAnim', extraArgs = [])        
         if monster.hp > HEADSHOT_DAMAGE:
             monster.hp -= HEADSHOT_DAMAGE
         else:
-            monster.destroy()
-            self.parent.zombies.remove(monster)
+            monster.node.stop()
+            monster.pause = True            
+            monster.node.play('die')
+            taskMgr.doMethodLater(3, self.parent.removeEnemy, 'RemoveEnemy', extraArgs = [monster])
         print monster.hp
         
     def handleBulletMonsterBodyCollision(self, entry):
         bullet_cn = entry.getFromNodePath()
         bullet = bullet_cn.getPythonTag('node')
-        bullet_cn.clearPythonTag('node')
         if bullet in self.parent.player.bullet_objects:
             self.parent.player.bullet_objects.remove(bullet)
         if bullet != None:
@@ -152,11 +157,16 @@ class CollisionManager(DirectObject):
         monster_cn = entry.getIntoNodePath()
         monster = monster_cn.getPythonTag('node')
         monster.shot_body.play()
+        monster.node.play('hit2')
+        duration = monster.node.getNumFrames('hit2') / 24  # animation play rate
+        taskMgr.doMethodLater(duration, monster.finishedAnim, 'FinishedAnim', extraArgs = [])
         if monster.hp > BODYSHOT_DAMAGE:
             monster.hp -= BODYSHOT_DAMAGE
         else:          
-            monster.destroy()
-            self.parent.zombies.remove(monster)
+            monster.node.stop()
+            monster.pause(True)            
+            monster.node.play('die')
+            taskMgr.doMethodLater(3, self.parent.removeEnemy, 'RemoveEnemy', extraArgs = [monster])             
         print monster.hp
         
     def handleMonsterWallCollision(self, entry):

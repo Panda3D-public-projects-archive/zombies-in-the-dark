@@ -24,7 +24,7 @@ ORDERS_IDLE = 0
 ORDERS_HERDING = 2
 
 
-MELEE_RANGE = 10
+MELEE_RANGE = 5
 MELEE_TIME = 1.5 #seconds
 
 
@@ -33,7 +33,7 @@ HEARING_RANGE = 20
 VIEW_RANGE = 30
 
 
-NORMAL_SPEED = 2
+NORMAL_SPEED = 5
 CHASE_SPEED = NORMAL_SPEED * 1.5
 
 
@@ -66,11 +66,13 @@ class Monster():
                                               'hit1':'models/baby-hit1',                                
                                               'hit2':'models/baby-hit2', 
                                               'die':'models/baby-die'})
+            self.head_node = self.node.exposeJoint(None,"modelRoot","Bip01_Head")
+            self.body_node = self.node.exposeJoint(None,"modelRoot","Bip01_Pelvis")
             self.node.setH(180)
+            self.node.setScale(0.03)
             self.node.flattenLight()
             self.zpos = 0
             self.node.setPos(pos[0]*TILE_SIZE,pos[1]*TILE_SIZE,self.zpos)
-            self.node.setScale(0.03)
             self.node.setTexture(loader.loadTexture('models/Zomby_D.png'))
             self.ts_normal = TextureStage('ts_normal')
             self.tex_normal = loader.loadTexture('models/Zomby_N.png')
@@ -80,8 +82,8 @@ class Monster():
             self.tex_gloss = loader.loadTexture('models/Zomby_S1.png')
             self.ts_gloss.setMode(TextureStage.MGloss)
             self.node.setTexture(self.ts_gloss, self.tex_gloss)            
-            self.node.reparentTo(render) 
-            self.node.loop('stand')
+            self.node.reparentTo(render)
+            self.node.loop('walk')
         elif type == 'nos':
             self.node = loader.loadModel('models/nos')
             self.zpos = 5
@@ -324,6 +326,16 @@ class Monster():
             if self.distanceToPlayer() <= MELEE_RANGE and self.angleToPlayerAbs() <= 45 and self.getLOS():
                 if time.time() - self.last_melee >= MELEE_TIME:
                     self.attack_sound.play()
+                    att = random.randint(0,2)
+                    if att == 0:
+                        animname = 'bite1'
+                    elif att == 1:
+                        animname = 'bite2'
+                    else:
+                        animname = 'head_attack'
+                    self.node.play(animname)
+                    duration = self.node.getNumFrames(animname) / 24  # animation play rate
+                    taskMgr.doMethodLater(duration, self.finishedAnim, 'FinishedAnim', extraArgs = [])
                     self.parent.player.getDamage()
                     self.last_melee = time.time()
         
@@ -374,6 +386,10 @@ class Monster():
  
         return task.cont
 
+    def finishedAnim(self):
+        if not self.pause:
+            self.node.loop('walk')
+        
 
     def rotateBy(self, value):
         self.node.setH( (self.node.getH() + value) % 360  )
@@ -449,12 +465,12 @@ class Monster():
         self.cn_body.node().clearPythonTag('node')
         self.cn_pusher.node().clearPythonTag('node')  
         self.cn_ray.node().clearPythonTag('node')
-        #TODO: vratiti kad bude Actor
-        #self.node.delete()
-        #self.node.cleanup()
+        self.node.delete()
+        self.node.cleanup()
         self.node.removeNode()
 
-    #TODO: Obavezno obrisati!!        
+    #TODO: Obavezno obrisati!!
+    """        
     def __del__(self):
         print("Zombie deleted")
-    
+    """
