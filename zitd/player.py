@@ -72,6 +72,9 @@ class Player(DirectObject):
     
         self.setKeyEvents()
     
+        self.pause = False
+    
+    
     def setKeyEvents(self):
         self.accept('w', self.setKeys, ['forward', 1])
         self.accept('w-up', self.setKeys, ['forward', 0])
@@ -210,6 +213,9 @@ class Player(DirectObject):
         s.start()
     
     def updatePlayer(self, task):
+        if self.pause:
+            return task.cont
+        
         if self.can_move == False:
             return task.cont
         
@@ -273,6 +279,9 @@ class Player(DirectObject):
         return task.cont
     
     def updateBullets(self, task):
+        if self.pause:
+            return task.cont
+        
         for bullet in self.bullet_objects:
             bullet.update(globalClock.getDt())
    

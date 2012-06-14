@@ -67,11 +67,13 @@ class Game(DirectObject):
     def pause(self):
         self.player.clearKeyEvents()
         self.player.disconnectMouse()
+        self.player.pause = True
         for z in self.zombies:
             z.pauze()
         
     def resume(self):
         self.player.setKeyEvents()
         self.player.reconnectMouse()
+        self.player.pause = False
         for z in self.zombies:
             z.resume()

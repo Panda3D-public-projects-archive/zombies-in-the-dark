@@ -187,6 +187,7 @@ class Level():
         self.light_task_time = random.randint(1, 2)
         taskMgr.add(self.lightTask, 'LightTask')
     
+            
     def loadWall(self, x, y, type):
         model = loader.loadModel('models/wall')
         num = random.randint(0, 10)
@@ -277,3 +278,14 @@ class Level():
                 self.light_task_time = random.randint(1, 4)
         return task.cont
         
+    
+    def getFloorTiles(self):
+        return self.nav_graph.keys()
+        
+    def getMaxX(self):
+        return self.x_size
+    
+    def getMaxY(self):
+        return self.y_size
+    
+    
