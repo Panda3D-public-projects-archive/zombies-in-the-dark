@@ -55,6 +55,10 @@ class Player(DirectObject):
         
         self.shoot_sound = base.loader.loadSfx("audio/GUN_FIRE-GoodSoundForYou-820112263.wav")
         self.gun_click_sound = base.loader.loadSfx("audio/Dry Fire Gun-SoundBible.com-2053652037.wav")
+        self.heart_sound = base.loader.loadSfx("audio/Slow_HeartBeat-Mike_Koenig-1853475164.wav")
+        self.heart_sound.setLoop(True)
+        self.heart_sound.setVolume(0.6)
+        self.heart_sound.play()
         
         self.scratches = loadImageAsPlane('models/scr.png')
         self.scratches.setTransparency(TransparencyAttrib.MAlpha) 
@@ -211,6 +215,7 @@ class Player(DirectObject):
             if time.time() - self.gunshot_at[1] > GUNSHOT_TIMEOUT:
                 self.gunshot_at = None
             
+        self.cooldown( globalClock.getDt() )
         
         if self.parent.type == 'FPS':
             md = base.win.getPointer(0)
@@ -269,3 +274,22 @@ class Player(DirectObject):
             bullet.update(globalClock.getDt())
    
         return task.cont
+    
+    
+    def adrenaline(self):
+        #self.heart_sound.setVolume(0.4)
+        rate = self.heart_sound.getPlayRate()
+        rate += 0.2
+        if rate > 2:
+            rate = 2
+        self.heart_sound.setPlayRate( rate )
+        
+        
+    def cooldown(self, dt):
+        rate = self.heart_sound.getPlayRate()
+        rate -= 0.02 * dt
+        if rate < 1:
+            rate = 1
+        self.heart_sound.setPlayRate( rate )
+            
+    

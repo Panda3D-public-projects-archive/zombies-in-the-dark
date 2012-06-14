@@ -181,6 +181,7 @@ class Monster():
                 
         if self.distanceToPlayer() < effective_hearing_range:
             print "I HEAR U!"
+            self.parent.player.adrenaline()
             #if we can see go chase him
             if self.getLOS():
                 self.player_last_seen_abs = p_pos_abs
@@ -305,6 +306,7 @@ class Monster():
         #print "orders:", self.orders
         
         if self.action == ACTION_CHASE:
+            self.parent.player.adrenaline()
             look_pos = Point3(self.player_last_seen_abs.getX(), self.player_last_seen_abs.getY(), self.zpos)
             self.node.lookAt( look_pos )
             self.node.setFluidPos(self.node, 0, CHASE_SPEED*globalClock.getDt(), 0)
