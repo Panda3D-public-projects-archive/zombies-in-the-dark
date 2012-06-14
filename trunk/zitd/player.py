@@ -23,7 +23,8 @@ class Player(DirectObject):
         taskMgr.add(self.updateBullets, 'UpdateBulletsTask')
         self.centerx = base.win.getProperties().getXSize()/2
         self.centery = base.win.getProperties().getYSize()/2
-        self.speed = TILE_SIZE
+        self.speed = TILE_SIZE - 4
+        self.sprint_speed = self.speed * 1.5
         self.can_move = True
         self.camera = True
         self.mouse_owner = True
@@ -69,6 +70,7 @@ class Player(DirectObject):
         self.keys['back'] = 0
         self.keys['strafe_left'] = 0
         self.keys['strafe_right'] = 0
+        self.keys['sprint'] = 0
     
         self.setKeyEvents()
     
@@ -84,6 +86,8 @@ class Player(DirectObject):
         self.accept('a-up', self.setKeys, ['strafe_left', 0])
         self.accept('d', self.setKeys, ['strafe_right', 1])
         self.accept('d-up', self.setKeys, ['strafe_right', 0])
+        self.accept('r', self.setKeys, ['sprint', 1])
+        self.accept('r-up', self.setKeys, ['sprint', 0])
         self.accept('mouse1', self.shoot)
         self.accept('mouse3', self.toggleFlashlight)
         #TODO: maknuti ovo
@@ -244,19 +248,30 @@ class Player(DirectObject):
     
             speed1 = 0
             speed2 = 0
+            
+            if self.keys['sprint']:
+                player_speed = self.sprint_speed
+            else:
+                player_speed = self.speed
+                
             if self.keys['forward']:
-                speed1 = self.speed * globalClock.getDt()
+                speed1 = player_speed * globalClock.getDt()
             if self.keys['back']:
-                speed1 =  -self.speed * globalClock.getDt()
+                speed1 =  -player_speed * globalClock.getDt()
             if self.keys['strafe_left']:
-                speed2 = -self.speed * globalClock.getDt()
+                speed2 = -player_speed * globalClock.getDt()
             if self.keys['strafe_right']:
-                speed2 = self.speed * globalClock.getDt()
+                speed2 = player_speed * globalClock.getDt()
     
             if speed1 or speed2:
+                if self.keys['sprint']:
+                    self.sprint = True
+                else:
+                    self.sprint = False
                 self.moving = True
             else:
                 self.moving = False
+                self.sprint = False
     
             self.node.setFluidZ(TILE_SIZE*ASPECT/1.5)
             self.node.setFluidPos(self.node, speed2, speed1, 0)
