@@ -168,3 +168,29 @@ class GameOverUI():
         self.parent.rRegion.setActive(0)
         self.parent.rContext.UnloadAllDocuments()
         self.parent = None
+        
+class GameWinUI():
+    
+    def __init__(self, parent):
+        self.parent = parent   
+        
+        LoadFontFace("ui/verdana.ttf")       #@UnresolvedImport 
+        self.parent.rRegion.setActive(1)
+        self.parent.rContext = self.parent.rRegion.getContext()
+        
+        self.doc = self.parent.rContext.LoadDocument('ui/gamewin.rml')
+        self.doc.Show()
+
+        element = self.doc.GetElementById('status_bar')
+        element.inner_rml = 'Congratulations, you made it!'
+        
+        element = self.doc.GetElementById('new')
+        element.AddEventListener('click', self.newGameButPressed, True)
+
+    def newGameButPressed(self):
+        self.parent.fsm.request('NewGame')
+
+    def cleanup(self):
+        self.parent.rRegion.setActive(0)
+        self.parent.rContext.UnloadAllDocuments()
+        self.parent = None
