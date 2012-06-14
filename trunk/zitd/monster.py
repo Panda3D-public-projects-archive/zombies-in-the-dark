@@ -104,9 +104,12 @@ class Monster():
         self.audio3d.attachSoundToObject(self.moan2, self.node)
         self.audio3d.attachSoundToObject(self.shot_head, self.node)
         self.audio3d.attachSoundToObject(self.shot_body, self.node)
-        delay = Wait(30)
+        self.audio3d.attachSoundToObject(self.aggro_sound, self.node)
+        self.audio3d.attachSoundToObject(self.attack_sound, self.node)
+        delay1 = Wait(25+d(15))
+        delay2 = Wait(25+d(15))
         self.moan_sequence = None
-        self.moan_sequence = Sequence(SoundInterval(self.moan1), delay, SoundInterval(self.moan2), delay).loop()
+        self.moan_sequence = Sequence(SoundInterval(self.moan1), delay1, SoundInterval(self.moan2), delay2).loop()
         self.move_sequence = None
         
         self.parent.collision_manager.createMonsterCollision(self)
@@ -114,7 +117,6 @@ class Monster():
         self.aggro_sound_last_played = 0
         #--------------------------brain-------------------------
         self.node.setH( 160 )
-        self.old_pos = None
         
         self.pause = False
 
@@ -202,7 +204,8 @@ class Monster():
         #-------------------------------SEE---------------------------------
         #if player is in front of us
         if self.angleToPlayerAbs() <= 45:
-            print "player in front LOS:", self.getLOS()
+            if self.id == 1:
+                print self.id, "player in front LOS:", self.getLOS()
             #if he is close enough to see and we can see him
             if self.distanceToPlayer() <= VIEW_RANGE and self.getLOS():
                 self.player_last_seen_abs = p_pos_abs
@@ -219,7 +222,8 @@ class Monster():
         #---------------------SEE MY OWN SHADOW---------------------------
         #if player is behind us and has a lit up flashlight and we have LOS to him
         if self.angleToPlayerAbs() > 135 and self.angleToPlayerAbs() < 225:
-            print "player in back, LOS:", self.getLOS()
+            if self.id == 1:            
+                print self.id, "player in back, LOS:", self.getLOS()
             
             if self.parent.player.flashlight and self.getLOS():
             
@@ -368,7 +372,6 @@ class Monster():
     def rotateBy(self, value):
         self.node.setH( (self.node.getH() + value) % 360  )
         
-        
 
     def hitWall(self):
         
@@ -381,8 +384,6 @@ class Monster():
         self.node.setFluidPos(self.node, 0, CHASE_SPEED*globalClock.getDt(), 0)            
         #self.action = IDLE
         """
-        #move a step back
-        #self.node.setPos(render, self.old_pos)        
         """
         old = self.node.getH()
         rnd = 80 + random.randint( 0, 20 )
@@ -422,6 +423,8 @@ class Monster():
         self.audio3d.detachSound(self.moan2)
         self.audio3d.detachSound(self.shot_head)
         self.audio3d.detachSound(self.shot_body)
+        self.audio3d.detachSound(self.aggro_sound)
+        self.audio3d.detachSound(self.attack_sound)
         if self.moan_sequence != None:
             self.moan_sequence.pause()
             self.moan_sequence = None
