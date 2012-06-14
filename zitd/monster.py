@@ -216,7 +216,7 @@ class Monster():
         #---------------------SEE MY OWN SHADOW---------------------------
         #if player is behind us and has a lit up flashlight and we have LOS to him
         if self.angleToPlayerAbs() > 135 and self.angleToPlayerAbs() < 225:
-            print "player in back, LOS:", elf.getLOS()
+            print "player in back, LOS:", self.getLOS()
             
             if self.parent.player.flashlight and self.getLOS():
             
