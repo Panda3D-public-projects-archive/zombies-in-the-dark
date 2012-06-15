@@ -46,10 +46,7 @@ class Game(DirectObject):
         self.collision_manager.createLevelCollision(self.level)
         
         self.zombies = []
-        self.zombie_counter = 0
-        # Instance one monster (needs to be done after setting up collision manager
-        for i in xrange(3):
-            self.spawnEnemy()
+        self.spawnEnemy()
         
         # Instance class for debug output
         #self.debug = DebugOptions(self)
@@ -81,11 +78,12 @@ class Game(DirectObject):
             self.cleanup()
             self.level = Level(self, LEVELS[i])
             self.collision_manager.createLevelCollision(self.level)
-            self.zombie_counter = 0
-            for i in xrange(3):
-                self.spawnEnemy()           
+            self.spawnEnemy()           
             self.player.node.setPos(self.level.start_pos[0]*TILE_SIZE,self.level.start_pos[1]*TILE_SIZE,TILE_SIZE*ASPECT/1.5)
             self.player.can_move = True
+            self.player.bullets += 2
+            if self.player.bullets > self.player.max_bullets:
+                self.player.bullets = self.player.max_bullets
     
     def gameOver(self):
         self.player.clearKeyEvents()
@@ -93,19 +91,18 @@ class Game(DirectObject):
         self.parent.gameOver()
         
     def spawnEnemy(self):
-        allTiles = self.level.getFloorTiles()
-        while True:
-            t = ( d(self.level.getMaxX()), d(self.level.getMaxY()) )
-            if t in allTiles:
-                break
-        self.zombie_counter += 1
-        #if self.zombie_counter == 1:
-        #    t = (9,13)
-        self.zombies.append( Monster(self.zombie_counter, self, 'baby', t) )
-    
+        lst = self.level.getAiList()
+        zombie_counter = 0
+        for pos in lst:
+            self.zombies.append( Monster(zombie_counter, self, 'baby', pos) )
+            zombie_counter += 1
+            #if zombie_counter > 3:
+            #    break
+            
     def removeEnemy(self, monster):
         monster.destroy()
-        self.zombies.remove(monster)
+        if monster in self.zombies:
+            self.zombies.remove(monster)
       
     def pause(self):
         self.player.clearKeyEvents()

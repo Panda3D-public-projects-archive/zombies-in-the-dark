@@ -15,6 +15,8 @@ class Level():
         self.nav_graph = {}
         self.x_size = pnmi.getXSize()
         self.y_size = pnmi.getYSize()
+
+        self.ai_list = []
         
         self.finish_tile = (0,0)
         
@@ -176,6 +178,12 @@ class Level():
                         else:
                             self.nav_graph[x, pos_y].append((x, pos_y-1))
         
+                    if (pnmi.getRedVal(x,y) == 0 and pnmi.getBlueVal(x,y) == 0 and pnmi.getGreenVal(x,y) == 255):
+                        self.ai_list.append((x,pos_y))
+                        
+                    #if x==1 and y==22:
+                    #    print pnmi.getRedVal(x,y), pnmi.getBlueVal(x,y), pnmi.getGreenVal(x,y)
+        
         # doors
         """
         for x in xrange(self.x_size):
@@ -314,7 +322,9 @@ class Level():
         self.tex_offset += globalClock.getDt() * 0.5
         self.exit_model.setTexOffset(self.ts_model_exit, 0, self.tex_offset)
         return task.cont
-        
+
+    def getAiList(self):
+        return self.ai_list
     
     def getFloorTiles(self):
         return self.nav_graph.keys()

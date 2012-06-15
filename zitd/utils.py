@@ -7,7 +7,9 @@ ASPECT = 0.8
 HEADSHOT_DAMAGE = 50
 BODYSHOT_DAMAGE = 30
 
-LEVELS = ['eob1', 'test']
+LEVELS = ['eob1', 'lvl3', 'test', 'lvl2']
+
+
 
 # Code by preusser from Panda3D forums
 # Link: http://www.panda3d.org/forums/viewtopic.php?t=11268
