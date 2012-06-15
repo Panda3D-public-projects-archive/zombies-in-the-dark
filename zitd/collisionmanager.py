@@ -48,6 +48,8 @@ class CollisionManager(DirectObject):
         self.accept('BulletCollisionNode-into-MonsterHeadCollisionNode', self.handleBulletMonsterHeadCollision)
         self.accept('BulletCollisionNode-into-MonsterBodyCollisionNode', self.handleBulletMonsterBodyCollision)
         self.accept('MonsterPusherCollisionNode-into-Wall', self.handleMonsterWallCollision)
+        
+        taskMgr.doMethodLater(1, self.monsterLosTraverseTask, 'MonsterLosTraverseTask')
 
     def createLevelCollision(self, level):
         level.wall_node.setCollideMask(COLL_PLAYER_WALL | COLL_BULLET_WALL_MONSTER | COLL_MONSTER_WALL | COLL_MONSTER_PLAYER_LOS) 
@@ -99,11 +101,13 @@ class CollisionManager(DirectObject):
         self.traverser.addCollider(monster.cn_pusher, self.pusher)
 
     def checkMonsterPlayerLos(self, monster):
+        """
         vector = self.player_cn.getPos(monster.cn_ray) - monster.cn_ray.getPos()
         vector.normalize()
         monster.ray.setDirection(vector)
         self.los_traverser.traverse(render)
         self.coll_queue.sortEntries()
+        """
         if self.coll_queue.getNumEntries() > 0:
             for entry in self.coll_queue.getEntries():
                 if monster == entry.getFromNodePath().getPythonTag('node'):
@@ -174,8 +178,18 @@ class CollisionManager(DirectObject):
         monster = monster_cn.getPythonTag('node')        
         monster.hitWall()
         
+    def monsterLosTraverseTask(self, task):
+        for monster in self.parent.zombies:
+            vector = self.player_cn.getPos(monster.cn_ray) - monster.cn_ray.getPos()
+            vector.normalize()
+            monster.ray.setDirection(vector)
+        self.los_traverser.traverse(render)
+        self.coll_queue.sortEntries()
+        return task.again
+        
     def cleanup(self):
         self.ignoreAll()
+        taskMgr.remove('MonsterLosTraverseTask')
     
     """
     def __del__(self):
