@@ -71,6 +71,7 @@ class Game(DirectObject):
         i += 1
         # Player finished all levels
         if len(LEVELS) == i:
+            self.player.heart_sound.stop()
             self.parent.fsm.request('GameWin')
         # Player not yet finished all levels, move to next level
         else:
