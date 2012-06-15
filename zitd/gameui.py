@@ -174,6 +174,7 @@ class GameWinUI():
     def __init__(self, parent):
         self.parent = parent   
         
+        self.parent.game.pause()
         LoadFontFace("ui/verdana.ttf")       #@UnresolvedImport 
         self.parent.rRegion.setActive(1)
         self.parent.rContext = self.parent.rRegion.getContext()
