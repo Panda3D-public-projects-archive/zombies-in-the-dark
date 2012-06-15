@@ -132,7 +132,7 @@ class Monster():
 
         self.action = ACTION_IDLE
 
-        if percent(1):
+        if percent(20):
             self.orders = ORDERS_PATROL
         else:
             self.orders = ORDERS_IDLE
@@ -284,7 +284,7 @@ class Monster():
         
         elif self.orders == ORDERS_PATROL:
             #percent chance to get idle
-            if percent( 1 ):
+            if percent( 5 ):
                 self.orders = ORDERS_IDLE
                 return task.again
                       
