@@ -53,7 +53,7 @@ class AppFSM(FSM.FSM):
             'Menu'       : ['NewGame'],
             'NewGame'    : ['Pause', 'GameOver', 'GameWin'],
             'Pause'      : ['ResumeGame', 'Menu'],
-            'ResumeGame' : ['Pause', 'GameOver'],
+            'ResumeGame' : ['Pause', 'GameOver', 'GameWin'],
             'GameOver'   : ['NewGame'],
             'GameWin'    : ['NewGame']
             }
