@@ -143,6 +143,8 @@ class GameOverUI():
         self.parent.rRegion.setActive(1)
         self.parent.rContext = self.parent.rRegion.getContext()
         
+        self.parent.game.pause()
+        
         self.gameover_list = []
         self.gameover_list.append('Brraaaains, brraaaaaaains!')
         self.gameover_list.append('The only thing missing is some fava beans and a nice chianti.')
