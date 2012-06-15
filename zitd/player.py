@@ -24,7 +24,7 @@ class Player(DirectObject):
         self.centerx = base.win.getProperties().getXSize()/2
         self.centery = base.win.getProperties().getYSize()/2
         self.speed = TILE_SIZE - 4
-        self.sprint_speed = self.speed * 1.5
+        self.sprint_speed = self.speed * 1.8
         self.can_move = True
         self.camera = True
         self.mouse_owner = True
@@ -86,13 +86,13 @@ class Player(DirectObject):
         self.accept('a-up', self.setKeys, ['strafe_left', 0])
         self.accept('d', self.setKeys, ['strafe_right', 1])
         self.accept('d-up', self.setKeys, ['strafe_right', 0])
-        self.accept('r', self.setKeys, ['sprint', 1])
-        self.accept('r-up', self.setKeys, ['sprint', 0])
+        self.accept('alt', self.setKeys, ['sprint', 1])
+        self.accept('alt-up', self.setKeys, ['sprint', 0])
         self.accept('mouse1', self.shoot)
         self.accept('mouse3', self.toggleFlashlight)
         #TODO: maknuti ovo
-        self.accept('x', self.disconnectMouse)
-        self.accept('y', self.reconnectMouse)
+        #self.accept('x', self.disconnectMouse)
+        #self.accept('y', self.reconnectMouse)
     def clearKeyEvents(self):
         self.ignoreAll()
     
