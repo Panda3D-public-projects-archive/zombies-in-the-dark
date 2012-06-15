@@ -8,6 +8,7 @@ class Level():
         self.name = name
         self.node = render.attachNewNode('LevelNode')
         self.wall_node = self.node.attachNewNode('LevelWallNode')
+        self.ghostwall_node = NodePath('GhostWallNode') # for collisions
         self.rf_light_node = self.node.attachNewNode('RedFlickeringLightNode')
         self.lights = []
         self.light_nodes = []
@@ -149,33 +150,49 @@ class Level():
                     
                     # neighbours
                     if x == 0:
-                        self.loadWall(x, pos_y, 'TILE_EAST').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                        wall = self.loadWall(x, pos_y, 'TILE_EAST')
+                        wall.reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                        wall.instanceTo(self.ghostwall_node)
                     if x == self.x_size-1:
-                        self.loadWall(x, pos_y, 'TILE_WEST').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                        wall = self.loadWall(x, pos_y, 'TILE_WEST')
+                        wall.reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                        wall.instanceTo(self.ghostwall_node)
                     if x > 0:
                         if pnmi.getRedVal(x-1,y) == 255 and pnmi.getBlueVal(x-1,y) == 0 and pnmi.getGreenVal(x-1,y) == 0:
-                            self.loadWall(x, pos_y, 'TILE_EAST').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                            wall = self.loadWall(x, pos_y, 'TILE_EAST')
+                            wall.reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                            wall.instanceTo(self.ghostwall_node)
                         else:
                             self.nav_graph[x, pos_y].append((x-1, pos_y))
                     if x < self.x_size-1:
                         if pnmi.getRedVal(x+1,y) == 255 and pnmi.getBlueVal(x+1,y) == 0 and pnmi.getGreenVal(x+1,y) == 0:
-                            self.loadWall(x, pos_y, 'TILE_WEST').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                            wall = self.loadWall(x, pos_y, 'TILE_WEST')
+                            wall.reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                            wall.instanceTo(self.ghostwall_node)
                         else:
                             self.nav_graph[x, pos_y].append((x+1, pos_y))
                     
                     
                     if y == 0:
-                        self.loadWall(x, pos_y, 'TILE_SOUTH').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                        wall = self.loadWall(x, pos_y, 'TILE_SOUTH')
+                        wall.reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                        wall.instanceTo(self.ghostwall_node)
                     if y == self.y_size-1:
-                        self.loadWall(x, pos_y, 'TILE_NORTH').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                        wall = self.loadWall(x, pos_y, 'TILE_NORTH')
+                        wall.reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                        wall.instanceTo(self.ghostwall_node)
                     if y > 0:
                         if pnmi.getRedVal(x,y-1) == 255 and pnmi.getBlueVal(x,y-1) == 0 and pnmi.getGreenVal(x,y-1) == 0:
-                            self.loadWall(x, pos_y, 'TILE_SOUTH').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                            wall = self.loadWall(x, pos_y, 'TILE_SOUTH')
+                            wall.reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                            wall.instanceTo(self.ghostwall_node)
                         else:
                             self.nav_graph[x, pos_y].append((x, pos_y+1))
                     if y < self.y_size-1:
                         if pnmi.getRedVal(x,y+1) == 255 and pnmi.getBlueVal(x,y+1) == 0 and pnmi.getGreenVal(x,y+1) == 0:
-                            self.loadWall(x, pos_y, 'TILE_NORTH').reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                            wall = self.loadWall(x, pos_y, 'TILE_NORTH')
+                            wall.reparentTo(self.wall_node_dict[(int(x/chunk_size), int(y/chunk_size))])
+                            wall.instanceTo(self.ghostwall_node)
                         else:
                             self.nav_graph[x, pos_y].append((x, pos_y-1))
         
