@@ -52,7 +52,7 @@ class CollisionManager(DirectObject):
         taskMgr.doMethodLater(1, self.monsterLosTraverseTask, 'MonsterLosTraverseTask')
 
     def createLevelCollision(self, level):
-        level.wall_node.setCollideMask(COLL_PLAYER_WALL | COLL_BULLET_WALL_MONSTER | COLL_MONSTER_WALL | COLL_MONSTER_PLAYER_LOS) 
+        level.ghostwall_node.setCollideMask(COLL_PLAYER_WALL | COLL_BULLET_WALL_MONSTER | COLL_MONSTER_WALL | COLL_MONSTER_PLAYER_LOS) 
     
     def createBulletCollision(self, bullet):
         bullet.cn = bullet.node.attachNewNode(CollisionNode('BulletCollisionNode'))
