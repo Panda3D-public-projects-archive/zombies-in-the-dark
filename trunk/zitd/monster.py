@@ -116,9 +116,10 @@ class Monster():
         self.audio3d.attachSoundToObject(self.shot_body, self.node)
         self.audio3d.attachSoundToObject(self.aggro_sound, self.node)
         self.audio3d.attachSoundToObject(self.attack_sound, self.node)
-        delay1 = Wait(25+d(15))
-        delay2 = Wait(25+d(15))
-        self.moan_sequence = Sequence(SoundInterval(self.moan1), delay1, SoundInterval(self.moan2), delay2)
+        delay0 = Wait(d(35))
+        delay1 = Wait(25+d(35))
+        delay2 = Wait(25+d(35))
+        self.moan_sequence = Sequence(delay0, SoundInterval(self.moan1), delay1, SoundInterval(self.moan2), delay2)
         self.moan_sequence.loop()
         
         self.parent.collision_manager.createMonsterCollision(self)
@@ -212,27 +213,22 @@ class Monster():
         #-------------------------------SEE---------------------------------
         #if player is in front of us
         if self.angleToPlayerAbs() <= 45:
-            if self.id == 1:
-                print self.id, "player in front LOS:", self.getLOS()
             #if he is close enough to see and we can see him
             if self.distanceToPlayer() <= VIEW_RANGE and self.getLOS():
                 self.player_last_seen_abs = p_pos_abs
-                print "vidim!"
+                #print "vidim!"
                 return True
             
             #if player has a flashlight lit, and we can see him go after him
             if self.parent.player.flashlight and self.getLOS():
                 self.player_last_seen_abs = p_pos_abs
-                print "vidim flashlight"
+                #print "vidim flashlight"
                 return True
                 
                 
         #---------------------SEE MY OWN SHADOW---------------------------
         #if player is behind us and has a lit up flashlight and we have LOS to him
         if self.angleToPlayerAbs() > 135 and self.angleToPlayerAbs() < 225:
-            if self.id == 1:            
-                print self.id, "player in back, LOS:", self.getLOS()
-            
             if self.parent.player.flashlight and self.getLOS():
             
                 #if he is looking at us
