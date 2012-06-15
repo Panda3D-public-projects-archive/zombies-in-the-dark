@@ -13,6 +13,14 @@ from direct.task.Task import Task
 class App(DirectObject):
     def __init__(self):
         ShowBase()
+        
+        props = WindowProperties()
+        props.setTitle( 'ZombiesInTheDark' )
+        base.win.requestProperties( props )
+        
+        # use fmod for sound
+        loadPrcFileData('', 'audio-library-name p3fmod_audio')
+        
         # Instancing fsm
         self.fsm = AppFSM(self, 'AppFSM')
         
