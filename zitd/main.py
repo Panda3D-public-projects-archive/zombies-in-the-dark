@@ -61,7 +61,14 @@ class AppFSM(FSM.FSM):
     def enterMenu(self):
         base.win.setClearColor(VBase4(0, 0, 0, 0))
         # Instancing main menu UI
-        self.parent.menuui = MenuUI(self.parent) 
+        try:
+            self.parent.game.player.heart_sound.stop()
+            self.parent.game.player.heart_sound.pause()
+        except:
+            pass
+         
+        self.parent.menuui = MenuUI(self.parent)
+
         
     def exitMenu(self):
         self.parent.menuui.cleanup()
