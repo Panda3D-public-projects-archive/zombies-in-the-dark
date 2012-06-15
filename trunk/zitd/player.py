@@ -86,8 +86,8 @@ class Player(DirectObject):
         self.accept('a-up', self.setKeys, ['strafe_left', 0])
         self.accept('d', self.setKeys, ['strafe_right', 1])
         self.accept('d-up', self.setKeys, ['strafe_right', 0])
-        self.accept('alt', self.setKeys, ['sprint', 1])
-        self.accept('alt-up', self.setKeys, ['sprint', 0])
+        self.accept('space', self.setKeys, ['sprint', 1])
+        self.accept('space-up', self.setKeys, ['sprint', 0])
         self.accept('mouse1', self.shoot)
         self.accept('mouse3', self.toggleFlashlight)
         #TODO: maknuti ovo
