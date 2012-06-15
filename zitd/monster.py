@@ -81,7 +81,11 @@ class Monster():
             self.ts_gloss = TextureStage('ts_gloss')
             self.tex_gloss = loader.loadTexture('models/Zomby_S1.png')
             self.ts_gloss.setMode(TextureStage.MGloss)
-            self.node.setTexture(self.ts_gloss, self.tex_gloss)            
+            self.node.setTexture(self.ts_gloss, self.tex_gloss)   
+            self.ts_glow = TextureStage('ts_glow')
+            self.tex_glow = loader.loadTexture('models/Zomby_I.png')
+            self.ts_glow.setMode(TextureStage.MGlow)
+            self.node.setTexture(self.ts_glow, self.tex_glow)         
             self.node.reparentTo(render)
             self.node.loop('walk')
         elif type == 'nos':
@@ -464,9 +468,8 @@ class Monster():
         self.node.delete()
         self.node.cleanup()
         self.node.removeNode()
-
-    #TODO: Obavezno obrisati!!
-    """        
+    
+    """
     def __del__(self):
-        print("Zombie deleted")
+        print("Zombie deleted!")
     """
