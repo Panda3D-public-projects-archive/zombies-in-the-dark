@@ -339,9 +339,8 @@ class Level():
         taskMgr.remove('LevelTask')
         self.node.removeNode()
     
-    #TODO: Obavezno obrisati!!
     """
     def __del__(self):
-        print "Level deleted"
+        print "Level deleted!"
     """
     

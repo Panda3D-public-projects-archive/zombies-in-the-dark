@@ -29,9 +29,9 @@ class Game(DirectObject):
             # Load aim icon
             cm = CardMaker('aim_node')
             cm.setFrame(-0.02, 0.02, -0.02, 0.02)
-            aim_node = aspect2d.attachNewNode(cm.generate())
-            aim_node.setTexture(loader.loadTexture('models/aim.png'))
-            aim_node.setTransparency(TransparencyAttrib.MAlpha)
+            self.aim_node = aspect2d.attachNewNode(cm.generate())
+            self.aim_node.setTexture(loader.loadTexture('models/aim.png'))
+            self.aim_node.setTransparency(TransparencyAttrib.MAlpha)
         elif self.type == 'DEBUG':
             base.disableMouse()
             self.camera = CameraManager(self)
@@ -72,10 +72,16 @@ class Game(DirectObject):
         # Player finished all levels
         if len(LEVELS) == i:
             self.parent.fsm.request('GameWin')
-            print "YOU WIN THA GAME!"
         # Player not yet finished all levels, move to next level
         else:
-            self.cleanup()
+            # Clean up
+            for z in self.zombies[:]:
+                z.destroy()            
+                self.zombies.remove(z)
+            self.level.destroy()
+            self.level = None
+            
+            # Reinit
             self.level = Level(self, LEVELS[i])
             self.collision_manager.createLevelCollision(self.level)
             self.spawnEnemy()           
@@ -119,8 +125,11 @@ class Game(DirectObject):
             z.resume()
             
     def cleanup(self):
-        for z in self.zombies[:]:
-            z.destroy()            
-            self.zombies.remove(z)
-        self.level.destroy()
-        self.level = None
+        self.aim_node.removeNode()
+        render.setLightOff(self.alnp)
+        self.alnp.removeNode()        
+        
+    """
+    def __del__(self):
+        print "Game deleted!"
+    """

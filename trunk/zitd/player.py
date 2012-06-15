@@ -323,5 +323,15 @@ class Player(DirectObject):
         if rate < 1:
             rate = 1
         self.heart_sound.setPlayRate( rate )
+        
+    def cleanup(self):
+        self.clearKeyEvents()
+        taskMgr.remove('UpdatePlayerTask')
+        taskMgr.remove('UpdateBulletsTask')
+        render.setLightOff(self.slnp)
+        self.node.removeNode()
             
-    
+    """
+    def __del__(self):
+        print "Player deleted!"
+    """

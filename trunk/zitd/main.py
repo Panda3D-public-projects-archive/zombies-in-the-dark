@@ -59,6 +59,21 @@ class AppFSM(FSM.FSM):
         self.parent.menuui.cleanup()
         
     def enterNewGame(self):
+        try:
+            for z in self.parent.game.zombies[:]:
+                z.destroy()            
+                self.parent.game.zombies.remove(z)
+            self.parent.game.level.destroy()
+            self.parent.game.level = None
+            self.parent.game.player.cleanup()
+            self.parent.game.player = None
+            self.parent.game.collision_manager.cleanup()
+            self.parent.game.collision_manager = None
+            self.parent.game.cleanup()
+            self.parent.game = None
+            render.setShaderOff()
+        except:
+            pass
         self.parent.game = Game(self.parent)
         # Instancing game UI
         self.parent.gameui = GameUI(self.parent)
@@ -111,6 +126,6 @@ class AppFSM(FSM.FSM):
     def exitGameWin(self):
         self.acceptOnce('escape', self.parent.pause)
         self.parent.gamewinui.cleanup()
-        
+    
 a = App()
 run()

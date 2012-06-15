@@ -141,7 +141,7 @@ class CollisionManager(DirectObject):
             monster.hp -= HEADSHOT_DAMAGE
         else:
             monster.node.stop()
-            monster.pause = True            
+            monster.pauze()             
             monster.node.play('die')
             taskMgr.doMethodLater(3, self.parent.removeEnemy, 'RemoveEnemy', extraArgs = [monster])
         print monster.hp
@@ -164,7 +164,7 @@ class CollisionManager(DirectObject):
             monster.hp -= BODYSHOT_DAMAGE
         else:          
             monster.node.stop()
-            monster.pause(True)            
+            monster.pauze()            
             monster.node.play('die')
             taskMgr.doMethodLater(3, self.parent.removeEnemy, 'RemoveEnemy', extraArgs = [monster])             
         print monster.hp
@@ -174,5 +174,10 @@ class CollisionManager(DirectObject):
         monster = monster_cn.getPythonTag('node')        
         monster.hitWall()
         
-        
-        
+    def cleanup(self):
+        self.ignoreAll()
+    
+    """
+    def __del__(self):
+        print "Collision Manager deleted!"
+    """
