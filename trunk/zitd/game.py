@@ -90,6 +90,7 @@ class Game(DirectObject):
             self.player.bullets += 2
             if self.player.bullets > self.player.max_bullets:
                 self.player.bullets = self.player.max_bullets
+            self.parent.gameui.refreshBullets()
     
     def gameOver(self):
         self.player.clearKeyEvents()
