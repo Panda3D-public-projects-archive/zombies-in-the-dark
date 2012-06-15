@@ -78,8 +78,11 @@ class Game(DirectObject):
             for z in self.zombies[:]:
                 z.destroy()            
                 self.zombies.remove(z)
+            for l in self.level.light_nodes:
+                render.setLightOff(l)                
             self.level.destroy()
             self.level = None
+
             
             # Reinit
             self.level = Level(self, LEVELS[i])
@@ -91,6 +94,7 @@ class Game(DirectObject):
             if self.player.bullets > self.player.max_bullets:
                 self.player.bullets = self.player.max_bullets
             self.parent.gameui.refreshBullets()
+            render.setShaderAuto()
     
     def gameOver(self):
         self.player.clearKeyEvents()
