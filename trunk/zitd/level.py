@@ -10,6 +10,7 @@ class Level():
         self.wall_node = self.node.attachNewNode('LevelWallNode')
         self.rf_light_node = self.node.attachNewNode('RedFlickeringLightNode')
         self.lights = []
+        self.light_nodes = []
         pnmi = PNMImage()
         pnmi.read(Filename('levels/'+name+'.png'))
         self.nav_graph = {}
@@ -299,6 +300,7 @@ class Level():
             plnp.setPos(x*TILE_SIZE - TILE_SIZE/2, y*TILE_SIZE, 5)
             render.setLight(plnp)
             self.lights.append(plight)
+            self.light_nodes.append(plnp)
             
     def levelTask(self, task):
         if self.parent.parent.fsm.state == 'Pause':
