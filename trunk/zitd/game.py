@@ -74,6 +74,8 @@ class Game(DirectObject):
             self.parent.fsm.request('GameWin')
         # Player not yet finished all levels, move to next level
         else:
+            self.player.heart_sound.stop()
+            
             # Clean up
             for z in self.zombies[:]:
                 z.destroy()            
@@ -82,7 +84,6 @@ class Game(DirectObject):
                 render.setLightOff(l)                
             self.level.destroy()
             self.level = None
-
             
             # Reinit
             self.level = Level(self, LEVELS[i])
@@ -97,6 +98,7 @@ class Game(DirectObject):
             render.setShaderAuto()
     
     def gameOver(self):
+        self.player.heart_sound.stop()
         self.player.clearKeyEvents()
         self.player.disconnectMouse()
         self.parent.gameOver()
@@ -130,6 +132,7 @@ class Game(DirectObject):
             z.resume()
             
     def cleanup(self):
+        self.player.heart_sound.stop()        
         self.aim_node.removeNode()
         render.setLightOff(self.alnp)
         self.alnp.removeNode()        
