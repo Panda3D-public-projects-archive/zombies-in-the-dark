@@ -1,0 +1,31 @@
+<rml>
+	<head>
+		<link type="text/rcss" href="rkt.rcss"/>
+		<link type="text/rcss" href="strain.rcss"/>
+	</head>
+	<body >
+		<div id="top_container">
+			<div id="top_center_container">
+				<div id="top_left_container">
+					<div id="health_bar">
+						<div id="health_left"></div>
+					</div>
+				</div>
+				<div id="top_middle_container">
+				</div>
+				<div id="top_right_container">
+					<div class="bullet"><div class="bullet_image"><img src="bullet.png" width="10px" height="29px"></img></div></div>
+					<div class="bullet"><div class="bullet_image"><img src="bullet.png" width="10px" height="29px"></img></div></div>
+					<div class="bullet"><div class="bullet_image"><img src="bullet.png" width="10px" height="29px"></img></div></div>
+					<div class="bullet"><div class="bullet_image"><img src="bullet.png" width="10px" height="29px"></img></div></div>
+					<div class="bullet"><div class="bullet_image"><img src="bullet.png" width="10px" height="29px"></img></div></div>
+					<div class="bullet"><div class="bullet_image"><img src="bullet.png" width="10px" height="29px"></img></div></div>
+					<div class="bullet"></div>
+					<div class="bullet"></div>
+					<div class="bullet"></div>
+					<div class="bullet"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+</rml>

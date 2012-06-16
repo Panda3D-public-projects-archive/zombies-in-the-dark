@@ -1,0 +1,35 @@
+<rml>
+	<head>
+		<link type="text/rcss" href="rkt.rcss"/>
+		<link type="text/rcss" href="strain.rcss"/>
+		<style>
+			body
+			{
+				width: 800px;
+				height: 600px;
+
+				margin: auto;
+			}
+			
+		</style>
+	</head>
+	<body >
+
+		<div id="logo_image">
+		</div>
+		<div id="splash">
+		</div>
+		<div id="container">
+			<div id="middle_button_container" style="text-align:center;">
+				<div id="splash_image">
+				</div>
+				<div id="newgame" class="middle_button_default">
+					<div class="button_text">Start Game</div>
+				</div>
+				<div onclick="exit()" class="middle_button_default">
+					<div class="button_text">Exit</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</rml>
